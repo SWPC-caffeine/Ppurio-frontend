@@ -1,0 +1,37 @@
+/* modal 배경 */
+.modalImageOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;  /* 모달이 상단에 보이도록 */
+  }
+  
+  /* modal 컨텐츠 */
+  .modalImageContent {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    width: 80vw;  /* 모달 넓이를 화면의 80%로 설정 */
+    height: 80vh; /* 모달 높이를 화면의 80%로 설정 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative; /* 버튼 위치 조정 */
+  }
+  
+  /* 이미지 미리보기 */
+  .imagePreview {
+    width: 100%;    /* 이미지가 모달 넓이를 꽉 채우도록 설정 */
+    height: 100%;   /* 이미지가 모달 높이를 꽉 채우도록 설정 */
+    object-fit: cover;  /* 이미지 비율을 유지하면서 모달을 꽉 채움 */
+    min-width: 300px;   /* 최소 넓이를 설정하여 작은 이미지도 크게 표시 */
+    min-height: 300px;  /* 최소 높이를 설정하여 작은 이미지도 크게 표시 */
+  }
+  
+  

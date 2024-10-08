@@ -1,0 +1,111 @@
+.container {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+    height: 100vh;
+    box-sizing: border-box;
+  }
+  
+  .leftSection {
+    width: 45%;
+    border: 1px solid #dcdcdc;
+    padding: 20px;
+  }
+  
+  .rightSection {
+    width: 45%;
+    border: 1px dashed #dcdcdc;
+    padding: 20px;
+    position: relative;
+  }
+  
+  .textInput {
+    margin-top: 23px;
+    width: 97%;
+    height: 200px;
+    padding: 10px;
+    font-size: 16px;
+  }
+  
+  .pdfUploadSection {
+    margin-top: 20px;
+  }
+  
+  .fileInputSection {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .fileInput {
+    margin-bottom: 10px;
+  }
+  
+  .fileInfo {
+    display: flex;
+    align-items: center;
+    margin-left: 10px; /* Add spacing between file input and file name */
+  }
+  
+  .fileInfo p {
+    margin-right: 10px; /* Add spacing between file name and trash icon */
+  }
+  
+  .deleteIcon {
+    color: #000000;
+    cursor: pointer;
+    font-size: 15px; /* Adjusted icon size */
+    transition: color 0.3s ease;
+    height: 20px;
+  }
+  
+  .deleteIcon:hover {
+    color: #ff1a1a;
+  }
+  
+  .pdfPlaceholder {
+    height: 540px;
+    border: 1px dashed #000;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .pdfPreview {
+    width: 100%;
+    height: 540px;
+  }
+  
+  .nextButton {
+    position: absolute;
+    bottom: 40px;
+    left: 43%;
+    transform: translateX(-50%);
+    padding: 15px 40px;
+    background-color: #444444;
+    color: #ffffff;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    border-radius: 10px;
+  }
+  .nextButton:hover {
+    background-color: #2b2a2a;
+    color: #e0e0e0;
+  }
+  
+  .customFileInput {
+    display: inline-block;
+    padding: 10px 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f0f0f0;
+    cursor: pointer;
+    margin-right: 10px;
+  }
+  
+  .customFileInput input[type="file"] {
+    display: none;  /* 실제 파일 선택 input을 숨김 */
+  }
+  

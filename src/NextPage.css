@@ -1,0 +1,74 @@
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modalContent {
+  background-color: #f0f0f0;
+  width: 400px;
+  height: 600px;
+  position: relative;
+  padding: 20px;
+}
+
+.pdfSection {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.pdfSummary {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: left;
+  margin-bottom: 20px;
+}
+
+.pdfContent {
+  width: 300px;
+  height: 400px;
+  background-color: #cecccc;
+  border: 2px solid rgb(0, 0, 0);
+  margin-bottom: 20px;
+}
+
+.nextButton2 {
+  width: 50px;
+  height: 30px;
+  background-color: gray;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  cursor: pointer;
+}
+.nextButton2:hover {
+  background-color: rgb(72, 72, 72);
+  color: rgb(140, 140, 140);
+}
+
+.confirmButton {
+  width: 50px;
+  height: 30px;
+  background-color: gray;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  cursor: pointer;
+}
+
+.closeButton {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  cursor: pointer;
+}
