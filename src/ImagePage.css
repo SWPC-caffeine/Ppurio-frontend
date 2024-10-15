@@ -1,37 +1,72 @@
 /* modal 배경 */
 .modalImageOverlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;  /* 모달이 상단에 보이도록 */
-  }
-  
-  /* modal 컨텐츠 */
-  .modalImageContent {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    width: 80vw;  /* 모달 넓이를 화면의 80%로 설정 */
-    height: 80vh; /* 모달 높이를 화면의 80%로 설정 */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative; /* 버튼 위치 조정 */
-  }
-  
-  /* 이미지 미리보기 */
-  .imagePreview {
-    width: 100%;    /* 이미지가 모달 넓이를 꽉 채우도록 설정 */
-    height: 100%;   /* 이미지가 모달 높이를 꽉 채우도록 설정 */
-    object-fit: cover;  /* 이미지 비율을 유지하면서 모달을 꽉 채움 */
-    min-width: 300px;   /* 최소 넓이를 설정하여 작은 이미지도 크게 표시 */
-    min-height: 300px;  /* 최소 높이를 설정하여 작은 이미지도 크게 표시 */
-  }
-  
-  
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* modal 컨텐츠 */
+.modalImageContent {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  width: 50vw;  /* 모달 넓이를 화면의 50%로 설정 */
+  height: 90vh; /* 모달 높이를 화면의 90%로 설정 */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;  /* 컨텐츠를 상단에 정렬 */
+  align-items: center;
+  position: relative;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+/* 이미지 미리보기 */
+.imagePreview {
+  width: 80%;    /* 이미지 미리보기 영역을 일정 비율로 설정 */
+  height: 80%;   /* 세로 영역도 동일하게 설정 */
+  max-width: 500px;  /* 최대 너비를 설정하여 모달보다 크지 않게 */
+  max-height: 400px; /* 최대 높이도 설정 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* 제목 스타일링 */
+.modalImageTitle {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;  /* 제목 아래에 공간 추가 */
+  margin-top: 5px;      /* 제목 상단에 공간 최소화 */
+  padding-top: 0;       /* 제목 상단 패딩 제거 */
+  align-self: flex-start; /* 제목을 왼쪽 정렬 */
+}
+
+/* 이미지 스타일링 */
+.imagePreview img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;  /* 원본 이미지 비율을 유지하며 크기를 조정 */
+  display: block;
+  border-radius: 8px; /* 이미지에 둥근 테두리 추가 (선택 사항) */
+}
+.confirmButton {
+  width: 50px;
+  height: 30px;
+  background-color: gray;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  cursor: pointer;
+}
+.confirmButton:hover {
+  background-color: rgb(72, 72, 72);
+  color: rgb(140, 140, 140);
+}
