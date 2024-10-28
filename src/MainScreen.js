@@ -1,42 +1,64 @@
 import React, { useState, useRef } from "react";
-import './css/MainScreen.css';  // Import the CSS file
+import './css/MainScreen.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
-import NextPage from './NextPage';  // 모달 컴포넌트 불러오기
+import NextPage from './NextPage';
 import ImagePage from './ImagePage';
 
 const MainScreen = () => {
   const [file, setFile] = useState(null);
   const [fileName, setFileName] = useState("");
+  const [userText, setUserText] = useState("");  // 프롬프트 텍스트 입력 상태 추가
   const fileInputRef = useRef(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [view, setView] = useState('next');  // 모달 뷰 상태 ('next' 또는 'image')
+  const [view, setView] = useState('next');
 
-  // Function to handle file upload (via input or drag & drop)
   const handleFileChange = (file) => {
     if (file) {
-      setFile(URL.createObjectURL(file));
+      setFile(file);  // setFile을 통해 실제 파일 객체 저장
       setFileName(file.name);
     }
   };
 
-  // Function to handle file deletion
   const handleFileDelete = () => {
-    setFile(null);  // Remove the file preview
-    setFileName("");  // Clear the file name
-    fileInputRef.current.value = null;  // Reset file input to allow re-upload
+    setFile(null);
+    setFileName("");
+    fileInputRef.current.value = null;
   };
 
-  const handleNextClick = () => {
-    setIsModalOpen(true);  // 모달 열기
+  // 서버에 파일과 텍스트 데이터 전송하기
+  const handleNextClick = async () => {
+    if (!file || !userText) {
+      alert("PDF 파일과 텍스트를 모두 입력해주세요.");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("file", file);  // PDF 파일 추가
+    formData.append("userText", userText);  // 사용자 텍스트 추가
+    console.log("FormData 내용:", formData); // FormData의 내용을 확인
+    try {
+      const response = await fetch("http://223.194.129.121:3030/upload", {
+        method: "POST",
+        body: formData,
+      });
+      if (!response.ok) {
+        throw new Error("파일 업로드에 실패했습니다.");
+      }
+      alert("파일이 성공적으로 업로드되었습니다.");
+      setIsModalOpen(true);
+    } catch (error) {
+      console.error("업로드 중 오류 발생:", error);
+      // pdf에서 추출한 문자가 8192자가 넘으면 gpt의 요약 input으로 넣을 수가 없음
+      alert("파일 업로드에 실패했습니다. 사유: 아마 pdf의 내용이 너무 많아서 그럴 것임(동건)");
+    }
   };
 
   const handleCloseModal = () => {
-    setIsModalOpen(false);  // 모달 닫기
-    setView('next');  // 모달 닫을 때 다시 첫 화면으로 리셋
+    setIsModalOpen(false);
+    setView('next');
   };
 
-  // Handle drag and drop
   const handleDragOver = (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -48,51 +70,48 @@ const MainScreen = () => {
     
     const droppedFile = e.dataTransfer.files[0];
     if (droppedFile && droppedFile.type === "application/pdf") {
-      handleFileChange(droppedFile);  // Drop된 파일을 처리
+      handleFileChange(droppedFile);
     } else {
       alert("PDF 파일만 업로드 가능합니다.");
     }
   };
 
-  // "다음" 버튼 클릭 시 ImagePage로 전환
   const handleNextPage = () => {
     setView('image');
   };
 
   return (
     <div className="container">
-      {/* Left Section: Text Input for "발송 목적" */}
       <div className="leftSection">
         <h2>발송 목적</h2>
         <textarea
           placeholder="프롬프트 텍스트 입력"
           className="textInput"
+          value={userText}
+          onChange={(e) => setUserText(e.target.value)}  // 사용자 입력을 상태로 저장
         />
       </div>
 
-      {/* Right Section: File Upload and PDF Preview */}
       <div className="rightSection">
         <h3>PDF 파일</h3>
         
         <div 
           className="pdfUploadSection" 
           onDragOver={handleDragOver} 
-          onDrop={handleDrop}  // 드래그 앤 드롭 핸들러 추가
+          onDrop={handleDrop}
         >
           <div className="fileInputSection">
-            {/* Custom File Input for uploading PDF */}
             <label className="customFileInput">
               <input
                 type="file"
                 accept="application/pdf"
                 onChange={(e) => handleFileChange(e.target.files[0])}
                 className="fileInput"
-                ref={fileInputRef}  // Assign ref to file input for resetting
+                ref={fileInputRef}
               />
-              {fileName ? fileName : "파일 선택"}  {/* 파일 선택 시 파일 이름 표시, 없으면 기본 텍스트 */}
+              {fileName ? fileName : "파일 선택"}
             </label>
             
-            {/* Display the uploaded file name and delete icon */}
             {fileName && (
               <div className="fileInfo">
                 <FontAwesomeIcon 
@@ -104,26 +123,23 @@ const MainScreen = () => {
             )}
           </div>
 
-          {/* Conditional rendering of PDF preview or placeholder */}
           {file ? (
             <iframe
-              src={file}
+              src={URL.createObjectURL(file)}
               title="pdf-preview"
               className="pdfPreview"
             />
           ) : (
             <div className="pdfPlaceholder">
               <p>PDF 파일 업로드 창</p>
-              <p>(파일 선택 또는 드래그 앤 드롭)</p>  {/* 안내 메시지 추가 */}
+              <p>(파일 선택 또는 드래그 앤 드롭)</p>
             </div>
           )}
         </div>
       </div>
 
-      {/* Next Button */}
       <button className="nextButton" onClick={handleNextClick}>다음</button>
     
-      {/* 모달 렌더링 - 상태에 따라 다른 모달 표시 */}
       {isModalOpen && view === 'next' && <NextPage onNext={handleNextPage} onClose={handleCloseModal} />}
       {isModalOpen && view === 'image' && <ImagePage onClose={handleCloseModal} />}
     </div>
