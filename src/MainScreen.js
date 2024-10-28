@@ -5,41 +5,64 @@ import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import NextPage from './NextPage';
 import ImagePage from './ImagePage';
 import LoadingSpinner from './loadingSpinner'; // 로딩 스피너 임포트
+import mammoth from "mammoth"; // Mammoth.js 임포트
 
 const MainScreen = () => {
   const [file, setFile] = useState(null);
   const [fileName, setFileName] = useState("");
   const [userText, setUserText] = useState("");  // 프롬프트 텍스트 입력 상태 추가
+  const [previewContent, setPreviewContent] = useState(""); // 미리보기 콘텐츠 상태 추가
   const fileInputRef = useRef(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [view, setView] = useState('next');
   const [isLoading, setIsLoading] = useState(false); // 로딩 상태 추가
 
-  const handleFileChange = (file) => {
+  const handleFileChange = async (file) => {
     if (file) {
       setFile(file);  // setFile을 통해 실제 파일 객체 저장
       setFileName(file.name);
+      setPreviewContent(""); // 기존 미리보기 내용 초기화
+
+      // 파일 형식에 따라 미리보기 처리
+      if (file.type === "application/pdf") {
+        setPreviewContent(<iframe src={URL.createObjectURL(file)} title="file-preview" className="pdfPreview" />);
+      } else if (file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document") {
+        // .docx 파일 처리
+        await handleWordFilePreview(file);
+      } else {
+        setPreviewContent(<p>미리보기가 지원되지 않는 파일 형식입니다.</p>);
+      }
+    }
+  };
+
+  const handleWordFilePreview = async (file) => {
+    try {
+      const arrayBuffer = await file.arrayBuffer();
+      const result = await mammoth.convertToHtml({ arrayBuffer });
+      setPreviewContent(<div dangerouslySetInnerHTML={{ __html: result.value }} />); // 변환된 HTML 설정
+    } catch (error) {
+      console.error("Word 파일 변환 중 오류 발생:", error);
+      setPreviewContent(<p>Word 파일을 변환하는 데 실패했습니다.</p>);
     }
   };
 
   const handleFileDelete = () => {
     setFile(null);
     setFileName("");
+    setPreviewContent(""); // 미리보기 내용 초기화
     fileInputRef.current.value = null;
   };
 
-  // 서버에 파일과 텍스트 데이터 전송하기
   const handleNextClick = async () => {
     if (!file || !userText) {
-      alert("PDF 파일과 텍스트를 모두 입력해주세요.");
+      alert("파일과 텍스트를 모두 입력해주세요.");
       return;
     }
 
-    setIsLoading(true); // 업로드 시작 시 로딩 상태 활성화
+    setIsLoading(true);
     const formData = new FormData();
-    formData.append("file", file);  // PDF 파일 추가
-    formData.append("userText", userText);  // 사용자 텍스트 추가
-    console.log("FormData 내용:", formData); // FormData의 내용을 확인
+    formData.append("file", file);
+    formData.append("userText", userText);
     try {
       const response = await fetch("http://223.194.129.121:3030/upload", {
         method: "POST", 
@@ -52,10 +75,9 @@ const MainScreen = () => {
       setIsModalOpen(true);
     } catch (error) {
       console.error("업로드 중 오류 발생:", error);
-      // pdf에서 추출한 문자가 8192자가 넘으면 gpt의 요약 input으로 넣을 수가 없음
-      alert("파일 업로드에 실패했습니다. 사유: 아마 pdf의 내용이 너무 많아서 그럴 것임(동건)");
+      alert("파일 업로드에 실패했습니다. 사유: 파일 크기나 형식 문제일 수 있습니다.");
     } finally {
-      setIsLoading(false); // 업로드 완료 후 로딩 상태 비활성화
+      setIsLoading(false);
     }
   };
 
@@ -74,11 +96,19 @@ const MainScreen = () => {
     e.stopPropagation();
     
     const droppedFile = e.dataTransfer.files[0];
-    if (droppedFile && droppedFile.type === "application/pdf") {
+    if (droppedFile && isValidFileType(droppedFile)) {
       handleFileChange(droppedFile);
     } else {
-      alert("PDF 파일만 업로드 가능합니다.");
+      alert("지원되는 파일 형식만 업로드 가능합니다.");
     }
+  };
+
+  const isValidFileType = (file) => {
+    const allowedTypes = [
+      "application/pdf",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    ];
+    return allowedTypes.includes(file.type);
   };
 
   const handleNextPage = () => {
@@ -93,12 +123,12 @@ const MainScreen = () => {
           placeholder="프롬프트 텍스트 입력"
           className="textInput"
           value={userText}
-          onChange={(e) => setUserText(e.target.value)}  // 사용자 입력을 상태로 저장
+          onChange={(e) => setUserText(e.target.value)}
         />
       </div>
 
       <div className="rightSection">
-        <h3>PDF 파일</h3>
+        <h3>파일 업로드</h3>
         
         <div 
           className="pdfUploadSection" 
@@ -109,7 +139,7 @@ const MainScreen = () => {
             <label className="customFileInput">
               <input
                 type="file"
-                accept="application/pdf"
+                accept=".pdf,.docx"  // 허용되는 파일 확장자 설정
                 onChange={(e) => handleFileChange(e.target.files[0])}
                 className="fileInput"
                 ref={fileInputRef}
@@ -128,15 +158,13 @@ const MainScreen = () => {
             )}
           </div>
 
-          {file ? (
-            <iframe
-              src={URL.createObjectURL(file)}
-              title="pdf-preview"
-              className="pdfPreview"
-            />
+          {previewContent ? (
+            <div className="filePreview">
+              {previewContent}
+            </div>
           ) : (
             <div className="pdfPlaceholder">
-              <p>PDF 파일 업로드 창</p>
+              <p>파일 업로드 창</p>
               <p>(파일 선택 또는 드래그 앤 드롭)</p>
             </div>
           )}

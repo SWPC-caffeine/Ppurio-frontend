@@ -65,6 +65,7 @@
   right: 20px;    /* Align to the right */
   width: 50px;
   height: 30px;
+
   background-color: gray;
   border: none;
   border-radius: 10px;
@@ -78,7 +79,6 @@
   color: rgb(140, 140, 140);
 }
 
-/* 이미지 저장 버튼 */
 /* 이미지 저장 버튼 */
 .imageSaveButton {
   position: absolute;
