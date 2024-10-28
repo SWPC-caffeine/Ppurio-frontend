@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './NextPage.css';  // 스타일 파일
+import './css/NextPage.css';  // 스타일 파일
 
 const NextPage = ({ onNext, onClose }) => {
   // State to manage the summarized PDF content

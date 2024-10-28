@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import './MainScreen.css';  // Import the CSS file
+import './css/MainScreen.css';  // Import the CSS file
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import NextPage from './NextPage';  // 모달 컴포넌트 불러오기

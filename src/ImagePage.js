@@ -1,5 +1,5 @@
 import React from 'react';
-import './ImagePage.css';  // 스타일 파일
+import './css/ImagePage.css';  // 스타일 파일
 
 const ImagePage = ({ onClose }) => {
   return (
