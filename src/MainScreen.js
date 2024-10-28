@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import NextPage from './NextPage';
 import ImagePage from './ImagePage';
+import LoadingSpinner from './loadingSpinner'; // 로딩 스피너 임포트
 
 const MainScreen = () => {
   const [file, setFile] = useState(null);
@@ -12,6 +13,7 @@ const MainScreen = () => {
   const fileInputRef = useRef(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [view, setView] = useState('next');
+  const [isLoading, setIsLoading] = useState(false); // 로딩 상태 추가
 
   const handleFileChange = (file) => {
     if (file) {
@@ -33,13 +35,14 @@ const MainScreen = () => {
       return;
     }
 
+    setIsLoading(true); // 업로드 시작 시 로딩 상태 활성화
     const formData = new FormData();
     formData.append("file", file);  // PDF 파일 추가
     formData.append("userText", userText);  // 사용자 텍스트 추가
     console.log("FormData 내용:", formData); // FormData의 내용을 확인
     try {
       const response = await fetch("http://223.194.129.121:3030/upload", {
-        method: "POST",
+        method: "POST", 
         body: formData,
       });
       if (!response.ok) {
@@ -51,6 +54,8 @@ const MainScreen = () => {
       console.error("업로드 중 오류 발생:", error);
       // pdf에서 추출한 문자가 8192자가 넘으면 gpt의 요약 input으로 넣을 수가 없음
       alert("파일 업로드에 실패했습니다. 사유: 아마 pdf의 내용이 너무 많아서 그럴 것임(동건)");
+    } finally {
+      setIsLoading(false); // 업로드 완료 후 로딩 상태 비활성화
     }
   };
 
@@ -139,6 +144,8 @@ const MainScreen = () => {
       </div>
 
       <button className="nextButton" onClick={handleNextClick}>다음</button>
+
+      {isLoading && <LoadingSpinner />} {/* 로딩 중일 때 로딩 스피너 표시 */}
     
       {isModalOpen && view === 'next' && <NextPage onNext={handleNextPage} onClose={handleCloseModal} />}
       {isModalOpen && view === 'image' && <ImagePage onClose={handleCloseModal} />}

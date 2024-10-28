@@ -59,8 +59,13 @@
   right: 20px;    /* Align to the right */
   background-color: #666;
   color: #fff;
-  padding: 10px 20px;
+  padding: 5px 10px;  /* 패딩을 줄여서 글자 크기에 맞게 조정 */
   border: none;
-  border-radius: 5px;
+  border-radius: 10px;
   cursor: pointer;
+  font-size: 14px;  /* 글자 크기를 줄여서 버튼에 맞추기 */
+  width: auto;  /* 버튼 너비를 자동으로 조정 */
+  height: auto; /* 버튼 높이를 자동으로 조정 */
+  min-width: 50px; /* 최소 너비 설정 */
+  min-height: 30px; /* 최소 높이 설정 */
 }

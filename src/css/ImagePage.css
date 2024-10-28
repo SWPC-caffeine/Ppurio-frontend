@@ -67,12 +67,37 @@
   height: 30px;
   background-color: gray;
   border: none;
-  border-radius: 5px;
+  border-radius: 10px;
   color: white;
   cursor: pointer;
+  font-size: 15px;
 }
 
 .confirmButton:hover {
   background-color: rgb(72, 72, 72);
   color: rgb(140, 140, 140);
 }
+
+/* 이미지 저장 버튼 */
+/* 이미지 저장 버튼 */
+.imageSaveButton {
+  position: absolute;
+  bottom: 20px;   /* 화면 하단에 배치 */
+  right: 80px;    /* 확인 버튼 왼쪽에 배치 (확인 버튼 크기와 약간의 여백 고려) */
+  width: 50px;    /* 확인 버튼과 동일한 너비 */
+  height: 30px;   /* 확인 버튼과 동일한 높이 */
+  background-image: url('../image/imageDownload.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  border: none;
+  cursor: pointer;
+  border-radius: 10px;
+  outline: none;
+  background-color: #fff;
+}
+
+.imageSaveButton:hover {
+  background-color: rgb(185, 185, 185);
+}
+

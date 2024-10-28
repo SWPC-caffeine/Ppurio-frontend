@@ -11,6 +11,8 @@ const ImagePage = ({ onClose }) => {
         <div className="imagePreview">
           <img src={require('./image/imageExample.jpeg')} alt="생성된 이미지" />  {/* 이미지 파일 경로 수정 */}
         </div>
+        {/*이미지 저장 버튼*/}
+        <button className = "imageSaveButton" img = "src/imageDownload.png" onClick={onClose}></button>
         {/* 확인 버튼 */}
         <button className="confirmButton" onClick={onClose}>확인</button>
       </div>
