@@ -1,3 +1,4 @@
+/* modal 배경 */
 .modalOverlay {
   position: fixed;
   top: 0;
@@ -8,57 +9,58 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 1000;
 }
 
+/* modal 컨텐츠 */
 .modalContent {
-  background-color: #f0f0f0;
-  width: 400px;
-  height: 600px;
-  position: relative;
+  background-color: #fff;
   padding: 20px;
-}
-
-.pdfSection {
+  border-radius: 8px;
+  width: 50vw;
+  height: 90vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 100%;
+  position: relative;
+  box-sizing: border-box;
 }
 
+/* PDF 요약 섹션 */
 .pdfSummary {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: left;
+  width: 100%;
   margin-bottom: 20px;
 }
 
-.pdfContent {
-  width: 300px;
-  height: 400px;
-  background-color: #cecccc;
-  border: 2px solid rgb(0, 0, 0);
-  margin-bottom: 20px;
+/* 요약 내용이 표시될 텍스트 영역 */
+.pdfContentEditable {
+  width: 40vw;
+  height: 60vh;  /* Increase the height to make the editable area larger */
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+  resize: none;  /* Disable resizing by user */
+}
+.pdfTitle {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;  /* 제목 아래에 공간 추가 */
+  margin-top: 5px;      /* 제목 상단에 공간 최소화 */
+  padding-top: 0;       /* 제목 상단 패딩 제거 */
+  align-self: flex-start; /* 제목을 왼쪽 정렬 */
 }
 
+/* 다음 버튼 */
 .nextButton2 {
-  width: 50px;
-  height: 30px;
-  background-color: gray;
+  position: absolute;
+  bottom: 20px;   /* Align to the bottom */
+  right: 20px;    /* Align to the right */
+  background-color: #666;
+  color: #fff;
+  padding: 10px 20px;
   border: none;
   border-radius: 5px;
-  color: white;
-  cursor: pointer;
-}
-.nextButton2:hover {
-  background-color: rgb(72, 72, 72);
-  color: rgb(140, 140, 140);
-}
-
-.closeButton {
-  position: absolute;
-  top: 10px;
-  right: 10px;
   cursor: pointer;
 }

@@ -21,7 +21,7 @@
   height: 90vh; /* 모달 높이를 화면의 90%로 설정 */
   display: flex;
   flex-direction: column;
-  justify-content: space-between;  /* 컨텐츠를 상단에 정렬 */
+  justify-content: center;  /* 컨텐츠를 상하로 중앙에 정렬 */
   align-items: center;
   position: relative;
   box-sizing: border-box;
@@ -33,7 +33,7 @@
   width: 80%;    /* 이미지 미리보기 영역을 일정 비율로 설정 */
   height: 80%;   /* 세로 영역도 동일하게 설정 */
   max-width: 500px;  /* 최대 너비를 설정하여 모달보다 크지 않게 */
-  max-height: 400px; /* 최대 높이도 설정 */
+  max-height: 80vh; /* 최대 높이 설정 */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -57,7 +57,12 @@
   display: block;
   border-radius: 8px; /* 이미지에 둥근 테두리 추가 (선택 사항) */
 }
+
+/* 확인 버튼 */
 .confirmButton {
+  position: absolute;
+  bottom: 20px;   /* Align to the bottom */
+  right: 20px;    /* Align to the right */
   width: 50px;
   height: 30px;
   background-color: gray;
@@ -66,6 +71,7 @@
   color: white;
   cursor: pointer;
 }
+
 .confirmButton:hover {
   background-color: rgb(72, 72, 72);
   color: rgb(140, 140, 140);
