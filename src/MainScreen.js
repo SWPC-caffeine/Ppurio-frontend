@@ -12,6 +12,7 @@ const MainScreen = () => {
   const [fileName, setFileName] = useState("");
   const [userText, setUserText] = useState("");  // 프롬프트 텍스트 입력 상태 추가
   const [previewContent, setPreviewContent] = useState(""); // 미리보기 콘텐츠 상태 추가
+  const [summaryContent, setSummaryContent] = useState("");  // 요약 내용 상태 추가
   const fileInputRef = useRef(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [view, setView] = useState('next');
@@ -64,14 +65,18 @@ const MainScreen = () => {
     formData.append("file", file);
     formData.append("userText", userText);
     try {
-      const response =  await fetch(`${process.env.REACT_APP_SERVER_IP}/upload`, {
-        method: "POST", 
+      const response = await fetch(`${process.env.REACT_APP_SERVER_IP}/upload`, {
+        method: "POST",
         body: formData,
       });
       if (!response.ok) {
         throw new Error("파일 업로드에 실패했습니다.");
       }
       alert("파일이 성공적으로 업로드되었습니다.");
+      // JSON 응답 처리
+      const data = await response.json();  // JSON 데이터 파싱
+      console.log('요약된 내용:', data.summary);  // 요약된 텍스트 확인
+      setSummaryContent(data.summary);  // 예: 요약 텍스트를 상태에 저장
       setIsModalOpen(true);
     } catch (error) {
       console.error("업로드 중 오류 발생:", error);
@@ -94,7 +99,7 @@ const MainScreen = () => {
   const handleDrop = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    
+
     const droppedFile = e.dataTransfer.files[0];
     if (droppedFile && isValidFileType(droppedFile)) {
       handleFileChange(droppedFile);
@@ -129,10 +134,10 @@ const MainScreen = () => {
 
       <div className="rightSection">
         <h3>파일 업로드</h3>
-        
-        <div 
-          className="pdfUploadSection" 
-          onDragOver={handleDragOver} 
+
+        <div
+          className="pdfUploadSection"
+          onDragOver={handleDragOver}
           onDrop={handleDrop}
         >
           <div className="fileInputSection">
@@ -146,12 +151,12 @@ const MainScreen = () => {
               />
               {fileName ? fileName : "파일 선택"}
             </label>
-            
+
             {fileName && (
               <div className="fileInfo">
-                <FontAwesomeIcon 
-                  icon={faTrashAlt} 
-                  className="deleteIcon" 
+                <FontAwesomeIcon
+                  icon={faTrashAlt}
+                  className="deleteIcon"
                   onClick={handleFileDelete}
                 />
               </div>
@@ -174,8 +179,14 @@ const MainScreen = () => {
       <button className="nextButton" onClick={handleNextClick}>다음</button>
 
       {isLoading && <LoadingSpinner />} {/* 로딩 중일 때 로딩 스피너 표시 */}
-    
-      {isModalOpen && view === 'next' && <NextPage onNext={handleNextPage} onClose={handleCloseModal} />}
+
+      {isModalOpen && view === 'next' && (
+        <NextPage
+          Content={summaryContent}  // 요약 텍스트 전달
+          onNext={handleNextPage}
+          onClose={handleCloseModal}
+        />
+      )}
       {isModalOpen && view === 'image' && <ImagePage onClose={handleCloseModal} />}
     </div>
   );
