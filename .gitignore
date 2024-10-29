@@ -73,6 +73,7 @@ local.properties
 node_modules
 *.log
 .nvm
+.env
 package-lock.json
 
 # OS X

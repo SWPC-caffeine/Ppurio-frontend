@@ -64,7 +64,7 @@ const MainScreen = () => {
     formData.append("file", file);
     formData.append("userText", userText);
     try {
-      const response = await fetch("http://223.194.129.121:3030/upload", {
+      const response =  await fetch(`${process.env.REACT_APP_SERVER_IP}/upload`, {
         method: "POST", 
         body: formData,
       });
