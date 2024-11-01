@@ -1,21 +1,62 @@
-import React, { useState } from "react";
+// MessageSendPage.js
+import React, { useState } from 'react';
 import './css/MessageSendPage.css';
+import phoneImg from './image/phoneImg.png';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+
+// 수신자 리스트 컴포넌트 분리
+const RecipientList = ({ recipients, onRemove, onClear }) => (
+  <div className="receiver-list">
+    <span className="receiver-label">받는 사람</span>
+    <div className="receiver-area">
+      {recipients.map((recipient) => (
+        <div key={recipient} className="recipient-item">
+          {recipient}
+          <button onClick={() => onRemove(recipient)} className="remove-button" aria-label="번호 제거">
+            x
+          </button>
+        </div>
+      ))}
+    </div>
+    <button className="clear-button" onClick={onClear} aria-label="전체 제거">
+      전체제거
+    </button>
+  </div>
+);
+
+// 전화번호 유효성 검사 함수
+const isValidPhoneNumber = (number) => {
+  const phoneRegex = /^01[0-9]-\d{3,4}-\d{4}$/;
+  return phoneRegex.test(number);
+};
 
 const MessageSendPage = () => {
-  const [inputValue, setInputValue] = useState("");
+  const [inputValue, setInputValue] = useState('');
   const [recipients, setRecipients] = useState([]);
-  const [isSendNowActive, setIsSendNowActive] = useState(false); // State for 즉시 발송 button
-  const [isSendScheduledActive, setIsSendScheduledActive] = useState(false); // State for 예약 발송 button
-  const [scheduledDate, setScheduledDate] = useState(""); // State to hold selected date for scheduled send
+  const [sendOption, setSendOption] = useState(null); // 'now' 또는 'scheduled'
+  const [scheduledDate, setScheduledDate] = useState(null);
+  const [alertMessage, setAlertMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
-  // Add each number individually to the recipients list
+  // 번호 추가
   const handleAddRecipient = () => {
-    const numbers = inputValue.split('\n').map(num => num.trim()).filter(num => num);
-    setRecipients([...recipients, ...numbers]);
-    setInputValue("");
+    const numbers = inputValue
+      .split('\n')
+      .map((num) => num.trim())
+      .filter((num) => num && isValidPhoneNumber(num));
+
+    if (numbers.length === 0) {
+      setAlertMessage('올바른 전화번호를 입력해 주세요.');
+      return;
+    }
+
+    setRecipients([...new Set([...recipients, ...numbers])]);
+    setInputValue('');
+    setAlertMessage('');
   };
 
-  // Trigger handleAddRecipient on Enter key press unless Shift is held
+  // Enter 키 입력 처리
   const handleKeyPress = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
@@ -23,125 +64,140 @@ const MessageSendPage = () => {
     }
   };
 
-  // Remove a specific recipient by index
-  const handleRemoveRecipient = (index) => {
-    setRecipients(recipients.filter((_, i) => i !== index));
+  // 수신자 제거
+  const handleRemoveRecipient = (number) => {
+    setRecipients(recipients.filter((recipient) => recipient !== number));
   };
 
-  // Clear all recipients
+  // 수신자 전체 제거
   const handleClearRecipients = () => {
     setRecipients([]);
   };
 
-  // Toggle 즉시 발송 button color
+  // 즉시 발송 선택
   const handleSendNowClick = () => {
-    setIsSendNowActive(true);
-    setIsSendScheduledActive(false);
-    setScheduledDate(""); // Clear the scheduled date if switching to "Send Now"
+    setSendOption('now');
+    setScheduledDate(null);
   };
 
-  // Toggle 예약 발송 button color and show date picker
+  // 예약 발송 선택
   const handleSendScheduledClick = () => {
-    setIsSendScheduledActive(true);
-    setIsSendNowActive(false);
+    setSendOption('scheduled');
   };
 
-  // Handle date change for scheduled send
-  const handleDateChange = (e) => {
-    setScheduledDate(e.target.value);
-  };
-
-  // Handle send button click and validation
-  const handleSendClick = () => {
-    // Validation checks
+  // 메시지 전송 처리
+  const handleSendClick = async () => {
+    // 검증 로직
     if (recipients.length === 0) {
-      alert("수신번호가 하나도 등록되어 있지 않습니다.");
+      setAlertMessage('수신번호가 하나도 등록되어 있지 않습니다.');
       return;
     }
-    if (!isSendNowActive && !isSendScheduledActive) {
-      alert("즉시 발송 또는 예약 발송을 선택해 주세요.");
+    if (!sendOption) {
+      setAlertMessage('즉시 발송 또는 예약 발송을 선택해 주세요.');
       return;
     }
-    if (isSendScheduledActive && !scheduledDate) {
-      alert("예약 발송을 선택한 경우, 보낼 날짜를 선택해 주세요.");
+    if (sendOption === 'scheduled' && !scheduledDate) {
+      setAlertMessage('예약 발송을 선택한 경우, 보낼 날짜와 시간을 선택해 주세요.');
       return;
     }
 
-    // If all checks pass, proceed with sending
-    alert("메시지를 성공적으로 보냈습니다.");
+    setIsLoading(true);
+    try {
+      // 실제 메시지 전송 API 호출 로직이 들어갈 곳
+      // 예를 들면: await sendMessageAPI({ recipients, scheduledDate });
+
+      setAlertMessage('메시지를 성공적으로 보냈습니다.');
+      setRecipients([]);
+      setSendOption(null);
+      setScheduledDate(null);
+    } catch (error) {
+      setAlertMessage('메시지 전송에 실패했습니다.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
     <div className="message-send-container">
       <div className="phone-preview">
-        <img src={require('./image/phoneImg.png')} alt="휴대폰" style={{ width: '150%', height: '100%' }} />
-        
+        <img src={phoneImg} alt="휴대폰" style={{ width: '150%', height: '100%' }} />
+
         {/* 휴대폰 화면 위에 문자와 이미지 위치 */}
         <div className="content-overlay">
           <div className="image-content">이미지</div>
           <div className="message-content">메시지</div>
         </div>
       </div>
-      
+
       <div className="send-settings">
         <h3>발신번호 설정</h3>
-        <button className="sender-number">010-1234-5678</button>
-        
+        <button className="sender-number" aria-label="발신번호">
+          010-1234-5678
+        </button>
+
         <h3>수신번호 설정</h3>
         <div className="receiver-settings">
           <div className="input-container">
-            <span className="input-label">직접 입력</span>
-            <textarea 
-              placeholder="번호 입력, 여러개 입력 시 Shift + Enter로 구분" 
-              className="input-area" 
-              value={inputValue} 
-              onChange={(e) => setInputValue(e.target.value)} 
+            <label className="input-label" htmlFor="phone-input">
+              직접 입력
+            </label>
+            <textarea
+              id="phone-input"
+              placeholder="번호 입력, 여러개 입력 시 Shift + Enter로 구분"
+              className="input-area"
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
               onKeyDown={handleKeyPress}
+              aria-label="전화번호 입력"
             />
-            <button className="add-button" onClick={handleAddRecipient}>번호 추가 +</button>
+            <button className="add-button" onClick={handleAddRecipient} aria-label="번호 추가">
+              번호 추가 +
+            </button>
           </div>
-          
-          <div className="receiver-list">
-            <span className="receiver-label">받는 사람</span>
-            <div className="receiver-area">
-              {recipients.map((recipient, index) => (
-                <div key={index} className="recipient-item">
-                  {recipient}
-                  <button onClick={() => handleRemoveRecipient(index)} className="remove-button">x</button>
-                </div>
-              ))}
-            </div>
-            <button className="clear-button" onClick={handleClearRecipients}>전체제거</button>
-          </div>
+
+          <RecipientList
+            recipients={recipients}
+            onRemove={handleRemoveRecipient}
+            onClear={handleClearRecipients}
+          />
         </div>
-        
+
         <div className="send-options">
-          <button 
-            className={`send-now ${isSendNowActive ? 'active' : ''}`} 
+          <button
+            className={`send-now ${sendOption === 'now' ? 'active' : ''}`}
             onClick={handleSendNowClick}
+            aria-label="즉시 발송"
           >
             즉시 발송
           </button>
-          <button 
-            className={`send-scheduled ${isSendScheduledActive ? 'active' : ''}`} 
+          <button
+            className={`send-scheduled ${sendOption === 'scheduled' ? 'active' : ''}`}
             onClick={handleSendScheduledClick}
+            aria-label="예약 발송"
           >
             예약 발송
           </button>
         </div>
 
-        {isSendScheduledActive && (
+        {sendOption === 'scheduled' && (
           <div className="date-picker">
-            <label>보낼 날짜: </label>
-            <input 
-              type="date" 
-              value={scheduledDate} 
-              onChange={handleDateChange} 
+            <label htmlFor="date-picker">보낼 날짜와 시간: </label>
+            <DatePicker
+              id="date-picker"
+              selected={scheduledDate}
+              onChange={(date) => setScheduledDate(date)}
+              showTimeSelect
+              dateFormat="yyyy/MM/dd hh:mm aa"
+              placeholderText="날짜와 시간을 선택하세요"
             />
           </div>
         )}
-        
-        <button className="send-button" onClick={handleSendClick}>보내기</button>
+
+        {alertMessage && <div className="alert-message">{alertMessage}</div>}
+
+        <button className="send-button" onClick={handleSendClick} disabled={isLoading} aria-label="보내기">
+          {isLoading ? '전송 중...' : '보내기'}
+        </button>
       </div>
     </div>
   );
