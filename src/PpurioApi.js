@@ -35,7 +35,7 @@ const MessagingComponent = () => {
       const payload = {
         account: USER_NAME, // 뿌리오 계정
         messageType: "SMS", // SMS(단문) / LMS(장문) / MMS(포토)
-        content: "예약 발송입니다. 즉시 발송은 시간(sendTime) 파라미터를 삭제하고 사용 부탁드립니다.",
+        content: "예약 발송입니다. 즉시 발송은 시간(sendTime) 파라미터를 삭제하고 사용 부탁드립니다.",  // 메시지 내용
         from: "01012345678", // 발신번호(숫자만)
         duplicateFlag: "N", // 수신번호 중복 허용 여부(Y:허용 / N:제거)
         rejectType: "AD", // 광고성 문자 수신거부 설정(AD:수신거부 / 비활성화: 파라미터 삭제)

@@ -1,0 +1,252 @@
+/* 부모 컨테이너를 중앙 정렬 */
+.message-send-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  width: 80%;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 20px;
+  box-sizing: border-box;
+  gap: 40px;
+}
+
+/* 휴대폰 프리뷰 */
+.phone-preview {
+  position: relative;
+  width: 350px;
+  height: 600px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+/* 휴대폰 화면 위에 오버레이될 콘텐츠 */
+.content-overlay {
+  position: absolute;
+  top: 80px;
+  left: 45px;
+  width: 260px;
+  height: 480px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+}
+
+/* 이미지와 메시지 영역 */
+.image-content {
+  width: 70%;
+  height: 35%;
+  background-color: #e0e0e0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: bold;
+  border-radius: 8px;
+}
+
+.message-content {
+  width: 90%;
+  height: 45%;
+  background-color: #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: bold;
+  border-radius: 8px;
+}
+
+/* 전체 우측 부분 너비 확장 */
+.send-settings {
+  width: 300px; /* 이전 250px에서 300px으로 확장 */
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 60px;
+}
+
+.send-settings h3 {
+  margin: 0;
+  font-weight: bold;
+}
+
+.sender-number {
+  background-color: #f0f0f0;
+  border: none;
+  padding: 10px;
+  width: 100%;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 16px;
+}
+
+/* 수신번호 설정 부분 스타일링 */
+.receiver-settings {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+}
+
+.input-container, .receiver-list {
+  width: 60%; /* 두 컨테이너의 너비 확장 */
+  background-color: #f9f9f9;
+  border: 1px dashed #ccc;
+  padding: 10px;
+  border-radius: 8px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+/* 입력 영역 스타일 */
+.input-area {
+  width: 100%;
+  height: 80px;
+  border: none;
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 8px;
+  box-sizing: border-box;
+  margin-bottom: 10px; /* 아래 여백 추가 */
+}
+
+.add-button, .clear-button {
+  width: 100%;
+  padding: 8px;
+  background-color: #f0f0f0;
+  border: 1px dashed #ccc;
+  font-size: 14px;
+  cursor: pointer;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.send-button {
+  width: 100%;
+  padding: 15px;
+  background-color: #f0f0f0;
+  border: 1px dashed #ccc;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 12px;
+  text-align: center;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.send-button:hover {
+  background-color: #6A99FF; /* Change background color on hover */
+  color: white; /* Change text color on hover */
+  border-color: #6A99FF; /* Change border color on hover */
+}
+
+/* 받는 사람 라벨 스타일 */
+.receiver-label, .input-label {
+  align-self: flex-start;
+  font-size: 14px;
+  color: #666;
+}
+
+/* Receiver area styling */
+.receiver-area {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  width: 100%;
+  max-height: 150px; /* Fixed height for the container */
+  overflow-y: auto; /* Enable vertical scrolling */
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  padding: 8px;
+  box-sizing: border-box;
+}
+
+/* Individual recipient item styling */
+.recipient-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 5px 8px;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+
+/* Phone number text inside the recipient item */
+.recipient-item > span {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis; /* Adds ellipsis if the text is too long */
+}
+
+/* Remove button style */
+.remove-button {
+  background: none;
+  border: none;
+  color: red;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 0;
+  margin-left: 8px;
+}
+
+/* 발송 옵션 */
+.send-options {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+}
+
+.send-now, .send-scheduled {
+  flex: 1;
+  padding: 15px;
+  background-color: #ddd;
+  border: 2px solid #ddd; /* Set a border for the default state */
+  text-align: center;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: border-color 0.3s ease, color 0.3s ease, background-color 0.3s ease;
+}
+
+/* Button active state with border color and text color change */
+.send-now.active, .send-scheduled.active {
+  background-color: white; /* Set background color to white for active */
+  color: #6A99FF; /* Change text color */
+  border-color: #6A99FF; /* Change border color for active */
+}
+
+/* Hover effect for send-now and send-scheduled */
+.send-now:hover, .send-scheduled:hover {
+  background-color: #f0f0f0; /* Lighten background on hover */
+  border-color: #6A99FF; /* Hover border color */
+}
+
+/* Date picker styling */
+.date-picker {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.date-picker input[type="date"] {
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 14px;
+}

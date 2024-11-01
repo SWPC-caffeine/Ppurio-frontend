@@ -55,6 +55,11 @@ const MainScreen = () => {
   };
 
   const handleNextClick = async () => {
+    if (!file || !userText) {
+      alert("파일과 텍스트를 모두 입력해주세요.");
+      return;
+    }
+
     setIsLoading(true);
     const formData = new FormData();
     formData.append("file", file);
@@ -117,15 +122,6 @@ const MainScreen = () => {
 
   const isNextButtonEnabled = file && userText;  // 다음 버튼 활성화 여부
 
-  // 다음 버튼 클릭 핸들러
-  const handleButtonClick = () => {
-    if (isNextButtonEnabled) {
-      handleNextClick();
-    } else {
-      alert("파일과 텍스트를 모두 입력해주세요.");
-    }
-  };
-
   return (
     <div className="container">
       <div className="leftSection">
@@ -184,7 +180,7 @@ const MainScreen = () => {
 
       <button
         className={`nextButton ${isNextButtonEnabled ? "active" : ""}`}
-        onClick={handleButtonClick}
+        onClick={isNextButtonEnabled ? handleNextClick : null}
       >
         다음
       </button>
