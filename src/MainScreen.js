@@ -194,7 +194,10 @@ const MainScreen = () => {
           onClose={handleCloseModal}
         />
       )}
-      {isModalOpen && view === 'image' && <ImagePage onClose={handleCloseModal} />}
+      {isModalOpen && view === 'image' && <ImagePage
+          pdfSummary={summaryContent}  // summaryContent를 ImagePage에 전달
+          onClose={handleCloseModal}
+        />}
     </div>
   );
 };

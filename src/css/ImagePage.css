@@ -28,15 +28,34 @@
   overflow: hidden;
 }
 
-/* 이미지 미리보기 */
 .imagePreview {
-  width: 80%;    /* 이미지 미리보기 영역을 일정 비율로 설정 */
-  height: 80%;   /* 세로 영역도 동일하게 설정 */
-  max-width: 500px;  /* 최대 너비를 설정하여 모달보다 크지 않게 */
-  max-height: 80vh; /* 최대 높이 설정 */
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  position: relative;
+  width: 80%;
+  height: 80%;
+  max-width: 500px;
+  max-height: 80vh;
+  border: 1px solid #ddd;
+}
+
+.placedText {
+  padding: 5px;
+  background-color: rgba(255, 255, 255, 0.8); /* 배경을 살짝 투명하게 */
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.summaryContainer {
+  width: 300px;
+  max-height: 500px;
+  overflow-y: auto;
+  padding: 10px;
+  border: 1px solid #ddd;
+  background-color: #f9f9f9;
+}
+
+.controls {
+  margin-top: 10px;
 }
 
 /* 제목 스타일링 */
@@ -65,7 +84,6 @@
   right: 20px;    /* Align to the right */
   width: 50px;
   height: 30px;
-
   background-color: gray;
   border: none;
   border-radius: 10px;
@@ -101,3 +119,32 @@
   background-color: rgb(185, 185, 185);
 }
 
+/* 드래그 가능한 텍스트 */
+.draggableText {
+  background-color:transparent;
+  padding: 5px;
+  margin: 5px 0;
+  cursor: move;
+  border-radius: 4px;
+  text-align: center;
+}
+.imageSaveButton {
+  position: absolute;
+  bottom: 20px;   /* 화면 하단에 배치 */
+  right: 80px;    /* 확인 버튼 왼쪽에 배치 (확인 버튼 크기와 약간의 여백 고려) */
+  width: 50px;
+  height: 30px;
+  background-image: url('../image/imageDownload.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  border: none;
+  cursor: pointer;
+  border-radius: 10px;
+  outline: none;
+  background-color: #fff;
+}
+
+.imageSaveButton:hover {
+  background-color: rgb(185, 185, 185);
+}

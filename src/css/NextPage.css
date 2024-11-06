@@ -31,6 +31,7 @@
 .pdfSummary {
   width: 100%;
   margin-bottom: 20px;
+  position: relative; /* 폰트 선택기를 절대 위치로 배치하기 위해 상대 위치로 설정 */
 }
 
 /* 요약 내용이 표시될 텍스트 영역 */
@@ -38,11 +39,14 @@
   width: 40vw;
   height: 60vh;  /* Increase the height to make the editable area larger */
   padding: 10px;
+  padding-bottom: 50px; /* 폰트 선택기와 겹치지 않도록 하단 패딩 추가 */
   border: 1px solid #ccc;
   border-radius: 5px;
   font-size: 16px;
   resize: none;  /* Disable resizing by user */
 }
+
+/* PDF 제목 스타일 */
 .pdfTitle {
   font-size: 18px;
   font-weight: bold;
@@ -69,3 +73,30 @@
   min-width: 50px; /* 최소 너비 설정 */
   min-height: 30px; /* 최소 높이 설정 */
 }
+
+/* 폰트 선택기 스타일 */
+.fontSelector {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  display: flex;
+  align-items: center;
+  margin: 0;
+}
+
+/* 폰트 선택기 내부의 레이블 스타일 */
+.fontSelector label {
+  margin-right: 8px;
+  font-size: 14px;
+}
+
+/* 폰트 선택기 래퍼 스타일 */
+.fontSelectWrapper {
+  width: 200px; /* 필요에 따라 너비 조정 */
+}
+
+/* 텍스트 영역과 폰트 선택기가 겹치지 않도록 하단 패딩 조정 */
+.pdfContentEditable {
+  padding-bottom: 80px;
+}
+
