@@ -1,4 +1,3 @@
-/* modal 배경 */
 .modalImageOverlay {
   position: fixed;
   top: 0;
@@ -12,139 +11,111 @@
   z-index: 1000;
 }
 
-/* modal 컨텐츠 */
 .modalImageContent {
   background-color: #fff;
   padding: 20px;
   border-radius: 8px;
-  width: 50vw;  /* 모달 넓이를 화면의 50%로 설정 */
-  height: 90vh; /* 모달 높이를 화면의 90%로 설정 */
+  width: 80vw;
+  height: 90vh;
   display: flex;
   flex-direction: column;
-  justify-content: center;  /* 컨텐츠를 상하로 중앙에 정렬 */
-  align-items: center;
-  position: relative;
   box-sizing: border-box;
-  overflow: hidden;
+  position: relative;
+}
+
+.imageContainer {
+  position: relative;
+  width: 100%;
+  height: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
 }
 
 .imagePreview {
-  position: relative;
-  width: 80%;
-  height: 80%;
-  max-width: 500px;
-  max-height: 80vh;
-  border: 1px solid #ddd;
+  width: 100%;
+  max-height: 70vh;
+  object-fit: contain;
+  border-radius: 8px;
 }
 
-.placedText {
-  padding: 5px;
-  background-color: rgba(255, 255, 255, 0.8); /* 배경을 살짝 투명하게 */
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  text-align: center;
-}
-
-.summaryContainer {
-  width: 300px;
-  max-height: 500px;
-  overflow-y: auto;
-  padding: 10px;
-  border: 1px solid #ddd;
-  background-color: #f9f9f9;
-}
-
-.controls {
-  margin-top: 10px;
-}
-
-/* 제목 스타일링 */
-.modalImageTitle {
-  font-size: 18px;
-  font-weight: bold;
-  margin-bottom: 10px;  /* 제목 아래에 공간 추가 */
-  margin-top: 5px;      /* 제목 상단에 공간 최소화 */
-  padding-top: 0;       /* 제목 상단 패딩 제거 */
-  align-self: flex-start; /* 제목을 왼쪽 정렬 */
-}
-
-/* 이미지 스타일링 */
-.imagePreview img {
+.textOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
-  object-fit: contain;  /* 원본 이미지 비율을 유지하며 크기를 조정 */
-  display: block;
-  border-radius: 8px; /* 이미지에 둥근 테두리 추가 (선택 사항) */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  padding: 10px;
+  box-sizing: border-box;
 }
 
-/* 확인 버튼 */
-.confirmButton {
+.overlayText {
+  background-color: transparent;
+  margin-bottom: 5px;
+  padding: 5px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.summaryControls {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.buttonContainer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
   position: absolute;
-  bottom: 20px;   /* Align to the bottom */
-  right: 20px;    /* Align to the right */
-  width: 50px;
-  height: 30px;
-  background-color: gray;
-  border: none;
-  border-radius: 10px;
-  color: white;
+  bottom: 10px;
+  right: 10px;
+}
+
+.textControlGroup {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.inlineControls {
+  display: flex;
+  gap: 5px;
+  margin-top: 5px;
+}
+
+.confirmButton {
+  padding: 5px 10px;
+  border-radius: 5px;
+  background-color: #666;
+  color: #fff;
   cursor: pointer;
-  font-size: 15px;
+  border: none;
 }
 
 .confirmButton:hover {
-  background-color: rgb(72, 72, 72);
-  color: rgb(140, 140, 140);
+  background-color: #444;
 }
 
-/* 이미지 저장 버튼 */
-.imageSaveButton {
-  position: absolute;
-  bottom: 20px;   /* 화면 하단에 배치 */
-  right: 80px;    /* 확인 버튼 왼쪽에 배치 (확인 버튼 크기와 약간의 여백 고려) */
-  width: 50px;    /* 확인 버튼과 동일한 너비 */
-  height: 30px;   /* 확인 버튼과 동일한 높이 */
-  background-image: url('../image/imageDownload.png');
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-  border: none;
+.saveButton {
+  padding: 5px 10px;
+  border-radius: 5px;
+  background-color: #666;
   cursor: pointer;
-  border-radius: 10px;
-  outline: none;
-  background-color: #fff;
-}
-
-.imageSaveButton:hover {
-  background-color: rgb(185, 185, 185);
-}
-
-/* 드래그 가능한 텍스트 */
-.draggableText {
-  background-color:transparent;
-  padding: 5px;
-  margin: 5px 0;
-  cursor: move;
-  border-radius: 4px;
-  text-align: center;
-}
-.imageSaveButton {
-  position: absolute;
-  bottom: 20px;   /* 화면 하단에 배치 */
-  right: 80px;    /* 확인 버튼 왼쪽에 배치 (확인 버튼 크기와 약간의 여백 고려) */
-  width: 50px;
-  height: 30px;
-  background-image: url('../image/imageDownload.png');
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
   border: none;
-  cursor: pointer;
-  border-radius: 10px;
-  outline: none;
-  background-color: #fff;
 }
 
-.imageSaveButton:hover {
-  background-color: rgb(185, 185, 185);
+.saveButton:hover {
+  background-color: #444;
+}
+
+.downloadIcon {
+  width: 20px;
+  height: 20px;
+  vertical-align: middle;
 }
