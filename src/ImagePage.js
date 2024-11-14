@@ -8,6 +8,8 @@ const ImagePage = ({ pdfSummary, selectedImageUrl, onClose }) => {
   const navigate = useNavigate();
   const [splitSummary, setSplitSummary] = useState([]);
   const [styles, setStyles] = useState({});
+  const [selectedTextIndex, setSelectedTextIndex] = useState(null);
+  const [toolbarPosition, setToolbarPosition] = useState({ x: 0, y: 0 });
 
   // 절대 경로로 변환 (선택된 이미지 URL이 상대 경로인 경우)
   const absoluteImageUrl =
@@ -32,11 +34,12 @@ const ImagePage = ({ pdfSummary, selectedImageUrl, onClose }) => {
   };
 
   const handleSaveImage = () => {
-    const imageContainer = document.querySelector(".imageContainer");
+    const captureElement = document.querySelector(".captureArea");
 
-    html2canvas(imageContainer, {
+    html2canvas(captureElement, {
       backgroundColor: null,
       useCORS: true,
+      scale: 1,
     }).then((canvas) => {
       const link = document.createElement("a");
       link.href = canvas.toDataURL("image/png");
@@ -45,73 +48,103 @@ const ImagePage = ({ pdfSummary, selectedImageUrl, onClose }) => {
     });
   };
 
-  const handleColorChange = (index, color) => {
-    setStyles((prevStyles) => ({
-      ...prevStyles,
-      [index]: { ...prevStyles[index], color },
-    }));
+  const handleColorChange = (color) => {
+    if (selectedTextIndex !== null) {
+      setStyles((prevStyles) => ({
+        ...prevStyles,
+        [selectedTextIndex]: { ...prevStyles[selectedTextIndex], color },
+      }));
+    }
   };
 
-  const handleFontSizeChange = (index, fontSize) => {
-    setStyles((prevStyles) => ({
-      ...prevStyles,
-      [index]: { ...prevStyles[index], fontSize: `${fontSize}px` },
-    }));
+  const handleFontSizeChange = (fontSize) => {
+    if (selectedTextIndex !== null) {
+      setStyles((prevStyles) => ({
+        ...prevStyles,
+        [selectedTextIndex]: {
+          ...prevStyles[selectedTextIndex],
+          fontSize: `${fontSize}px`,
+        },
+      }));
+    }
+  };
+
+  const handleTextClick = (index, event) => {
+    event.stopPropagation();
+    setSelectedTextIndex(index);
+    // 툴바 위치 설정
+    const rect = event.target.getBoundingClientRect();
+    const containerRect = document
+      .querySelector(".captureArea")
+      .getBoundingClientRect();
+    setToolbarPosition({
+      x: rect.left - containerRect.left,
+      y: rect.top - containerRect.top - 50,
+    });
+  };
+
+  const handleContainerClick = () => {
+    setSelectedTextIndex(null);
   };
 
   return (
-    <div className="modalImageOverlay">
+    <div className="modalImageOverlay" onClick={handleContainerClick}>
       <div className="modalImageContent">
         <h3>커스터마이즈된 포스터</h3>
 
-        <div className="imageContainer">
+        <div className="captureArea" onClick={(e) => e.stopPropagation()}>
           <img
-            src={absoluteImageUrl}
-            alt="선택된 이미지"
+            src={require("./image/imageExample.png")}
+            alt="생성된 이미지"
             className="imagePreview"
           />
-          <div className="textOverlay">
-            {splitSummary.map((sentence, index) => (
-              <div key={index} className="textControlGroup">
-                <Draggable bounds=".imagePreview">
-                  <div
-                    className="overlayText"
-                    style={{
-                      color: styles[index]?.color || "#000",
-                      fontSize: styles[index]?.fontSize || "16px",
-                    }}
-                  >
-                    {sentence}
-                  </div>
-                </Draggable>
-
-                <div className="inlineControls" data-html2canvas-ignore="true">
-                  <label>
-                    색상:
-                    <input
-                      type="color"
-                      onChange={(e) => handleColorChange(index, e.target.value)}
-                    />
-                  </label>
-                  <label>
-                    글자 크기:
-                    <input
-                      defaultValue={16}
-                      type="number"
-                      min="10"
-                      max="100"
-                      onChange={(e) =>
-                        handleFontSizeChange(index, e.target.value)
-                      }
-                    />{" "}
-                    px
-                  </label>
-                </div>
+          {/* 드래그 가능한 텍스트 오버레이 */}
+          {splitSummary.map((sentence, index) => (
+            <Draggable key={index} bounds=".imagePreview">
+              <div
+                className="overlayText"
+                style={{
+                  color: styles[index]?.color || "#000",
+                  fontSize: styles[index]?.fontSize || "16px",
+                }}
+                onClick={(e) => handleTextClick(index, e)}
+              >
+                {sentence}
               </div>
-            ))}
-          </div>
+            </Draggable>
+          ))}
+          {/* 떠다니는 툴바 */}
+          {selectedTextIndex !== null && (
+            <div
+              className="floatingToolbar"
+              style={{ left: toolbarPosition.x, top: toolbarPosition.y }}
+              onClick={(e) => e.stopPropagation()}
+              data-html2canvas-ignore="true"
+            >
+              <label>
+                색상:
+                <input
+                  type="color"
+                  value={styles[selectedTextIndex]?.color || "#000"}
+                  onChange={(e) => handleColorChange(e.target.value)}
+                />
+              </label>
+              <label>
+                글자 크기:
+                <input
+                  type="number"
+                  min="10"
+                  max="100"
+                  value={parseInt(styles[selectedTextIndex]?.fontSize) || 16}
+                  onChange={(e) => handleFontSizeChange(e.target.value)}
+                />{" "}
+                px
+              </label>
+            </div>
+          )}
         </div>
 
+        {/* 확인과 저장 버튼 */}
         <div className="buttonContainer">
           <button className="confirmButton" onClick={handleConfirmClick}>
             확인
