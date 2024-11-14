@@ -8,10 +8,14 @@ const ImagePage = ({ pdfSummary, onClose }) => {
   const navigate = useNavigate();
   const [splitSummary, setSplitSummary] = useState([]);
   const [styles, setStyles] = useState({});
+  const [selectedTextIndex, setSelectedTextIndex] = useState(null);
+  const [toolbarPosition, setToolbarPosition] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
     if (pdfSummary) {
-      setSplitSummary(pdfSummary.split('-').map((sentence) => sentence.trim()).filter(Boolean));
+      setSplitSummary(
+        pdfSummary.split('-').map((sentence) => sentence.trim()).filter(Boolean)
+      );
     }
   }, [pdfSummary]);
 
@@ -20,11 +24,12 @@ const ImagePage = ({ pdfSummary, onClose }) => {
   };
 
   const handleSaveImage = () => {
-    const imageContainer = document.querySelector('.imageContainer');
+    const captureElement = document.querySelector('.captureArea');
 
-    html2canvas(imageContainer, {
+    html2canvas(captureElement, {
       backgroundColor: null,
       useCORS: true,
+      scale: 1,
     }).then((canvas) => {
       const link = document.createElement('a');
       link.href = canvas.toDataURL('image/png');
@@ -33,77 +38,105 @@ const ImagePage = ({ pdfSummary, onClose }) => {
     });
   };
 
-  const handleColorChange = (index, color) => {
-    setStyles((prevStyles) => ({
-      ...prevStyles,
-      [index]: { ...prevStyles[index], color },
-    }));
+  const handleColorChange = (color) => {
+    if (selectedTextIndex !== null) {
+      setStyles((prevStyles) => ({
+        ...prevStyles,
+        [selectedTextIndex]: { ...prevStyles[selectedTextIndex], color },
+      }));
+    }
   };
 
-  const handleFontSizeChange = (index, fontSize) => {
-    setStyles((prevStyles) => ({
-      ...prevStyles,
-      [index]: { ...prevStyles[index], fontSize: `${fontSize}px` },
-    }));
+  const handleFontSizeChange = (fontSize) => {
+    if (selectedTextIndex !== null) {
+      setStyles((prevStyles) => ({
+        ...prevStyles,
+        [selectedTextIndex]: { ...prevStyles[selectedTextIndex], fontSize: `${fontSize}px` },
+      }));
+    }
+  };
+
+  const handleTextClick = (index, event) => {
+    event.stopPropagation();
+    setSelectedTextIndex(index);
+    // 툴바 위치 설정
+    const rect = event.target.getBoundingClientRect();
+    const containerRect = document.querySelector('.captureArea').getBoundingClientRect();
+    setToolbarPosition({ x: rect.left - containerRect.left, y: rect.top - containerRect.top - 50 });
+  };
+
+  const handleContainerClick = () => {
+    setSelectedTextIndex(null);
   };
 
   return (
-    <div className="modalImageOverlay">
+    <div className="modalImageOverlay" onClick={handleContainerClick}>
       <div className="modalImageContent">
         <h3>커스터마이즈된 포스터</h3>
-        
-        <div className="imageContainer">
-          <img 
-            src={require('./image/imageExample.png')} 
-            alt="생성된 이미지" 
-            className="imagePreview" 
+
+        <div className="captureArea" onClick={(e) => e.stopPropagation()}>
+          <img
+            src={require('./image/imageExample.png')}
+            alt="생성된 이미지"
+            className="imagePreview"
           />
-          {/* Draggable text overlay */}
-          <div className="textOverlay">
-            {splitSummary.map((sentence, index) => (
-              <div key={index} className="textControlGroup">
-                <Draggable bounds=".imagePreview">
-                  <div
-                    className="overlayText"
-                    style={{
-                      color: styles[index]?.color || '#000',
-                      fontSize: styles[index]?.fontSize || '16px',
-                    }}
-                  >
-                    {sentence}
-                  </div>
-                </Draggable>
-                
-                {/* 고정된 글자색과 크기 조절 컨트롤 */}
-                <div className="inlineControls" data-html2canvas-ignore="true">
-                  <label>
-                    색상:
-                    <input
-                      type="color"
-                      onChange={(e) => handleColorChange(index, e.target.value)}
-                    />
-                  </label>
-                  <label>
-                    글자 크기:
-                    <input
-                      defaultValue={16}
-                      type="number"
-                      min="10"
-                      max="100"
-                      onChange={(e) => handleFontSizeChange(index, e.target.value)}
-                    /> px
-                  </label>
-                </div>
+          {/* 드래그 가능한 텍스트 오버레이 */}
+          {splitSummary.map((sentence, index) => (
+            <Draggable key={index} bounds=".imagePreview">
+              <div
+                className="overlayText"
+                style={{
+                  color: styles[index]?.color || '#000',
+                  fontSize: styles[index]?.fontSize || '16px',
+                }}
+                onClick={(e) => handleTextClick(index, e)}
+              >
+                {sentence}
               </div>
-            ))}
-          </div>
+            </Draggable>
+          ))}
+          {/* 떠다니는 툴바 */}
+          {selectedTextIndex !== null && (
+            <div
+              className="floatingToolbar"
+              style={{ left: toolbarPosition.x, top: toolbarPosition.y }}
+              onClick={(e) => e.stopPropagation()}
+              data-html2canvas-ignore="true"
+            >
+              <label>
+                색상:
+                <input
+                  type="color"
+                  value={styles[selectedTextIndex]?.color || '#000'}
+                  onChange={(e) => handleColorChange(e.target.value)}
+                />
+              </label>
+              <label>
+                글자 크기:
+                <input
+                  type="number"
+                  min="10"
+                  max="100"
+                  value={parseInt(styles[selectedTextIndex]?.fontSize) || 16}
+                  onChange={(e) => handleFontSizeChange(e.target.value)}
+                />{' '}
+                px
+              </label>
+            </div>
+          )}
         </div>
 
-        {/* 오른쪽 하단에 위치한 확인과 저장 버튼 */}
+        {/* 확인과 저장 버튼 */}
         <div className="buttonContainer">
-          <button className="confirmButton" onClick={handleConfirmClick}>확인</button>
+          <button className="confirmButton" onClick={handleConfirmClick}>
+            확인
+          </button>
           <button className="saveButton" onClick={handleSaveImage}>
-            <img src={require('./image/imageDownload.png')} alt="저장" className="downloadIcon" />
+            <img
+              src={require('./image/imageDownload.png')}
+              alt="저장"
+              className="downloadIcon"
+            />
           </button>
         </div>
       </div>
