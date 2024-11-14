@@ -1,34 +1,46 @@
-import React, { useState, useEffect } from 'react';
-import './css/ImagePage.css';
-import { useNavigate } from 'react-router-dom';
-import Draggable from 'react-draggable';
-import html2canvas from 'html2canvas';
+import React, { useState, useEffect } from "react";
+import "./css/ImagePage.css";
+import { useNavigate } from "react-router-dom";
+import Draggable from "react-draggable";
+import html2canvas from "html2canvas";
 
-const ImagePage = ({ pdfSummary, onClose }) => {
+const ImagePage = ({ pdfSummary, selectedImageUrl, onClose }) => {
   const navigate = useNavigate();
   const [splitSummary, setSplitSummary] = useState([]);
   const [styles, setStyles] = useState({});
 
+  // 절대 경로로 변환 (선택된 이미지 URL이 상대 경로인 경우)
+  const absoluteImageUrl =
+    selectedImageUrl && selectedImageUrl.startsWith("http")
+      ? selectedImageUrl
+      : `http://223.194.133.27:3030/${selectedImageUrl}`;
+
   useEffect(() => {
+    console.log("Selected Image URL:", selectedImageUrl);
     if (pdfSummary) {
-      setSplitSummary(pdfSummary.split('-').map((sentence) => sentence.trim()).filter(Boolean));
+      setSplitSummary(
+        pdfSummary
+          .split("-")
+          .map((sentence) => sentence.trim())
+          .filter(Boolean)
+      );
     }
-  }, [pdfSummary]);
+  }, [pdfSummary, selectedImageUrl]);
 
   const handleConfirmClick = () => {
-    navigate('/send-message');
+    navigate("/send-message");
   };
 
   const handleSaveImage = () => {
-    const imageContainer = document.querySelector('.imageContainer');
+    const imageContainer = document.querySelector(".imageContainer");
 
     html2canvas(imageContainer, {
       backgroundColor: null,
       useCORS: true,
     }).then((canvas) => {
-      const link = document.createElement('a');
-      link.href = canvas.toDataURL('image/png');
-      link.download = 'customized_image.png';
+      const link = document.createElement("a");
+      link.href = canvas.toDataURL("image/png");
+      link.download = "customized_image.png";
       link.click();
     });
   };
@@ -51,14 +63,13 @@ const ImagePage = ({ pdfSummary, onClose }) => {
     <div className="modalImageOverlay">
       <div className="modalImageContent">
         <h3>커스터마이즈된 포스터</h3>
-        
+
         <div className="imageContainer">
-          <img 
-            src={require('./image/imageExample.png')} 
-            alt="생성된 이미지" 
-            className="imagePreview" 
+          <img
+            src={absoluteImageUrl}
+            alt="선택된 이미지"
+            className="imagePreview"
           />
-          {/* Draggable text overlay */}
           <div className="textOverlay">
             {splitSummary.map((sentence, index) => (
               <div key={index} className="textControlGroup">
@@ -66,15 +77,14 @@ const ImagePage = ({ pdfSummary, onClose }) => {
                   <div
                     className="overlayText"
                     style={{
-                      color: styles[index]?.color || '#000',
-                      fontSize: styles[index]?.fontSize || '16px',
+                      color: styles[index]?.color || "#000",
+                      fontSize: styles[index]?.fontSize || "16px",
                     }}
                   >
                     {sentence}
                   </div>
                 </Draggable>
-                
-                {/* 고정된 글자색과 크기 조절 컨트롤 */}
+
                 <div className="inlineControls" data-html2canvas-ignore="true">
                   <label>
                     색상:
@@ -90,8 +100,11 @@ const ImagePage = ({ pdfSummary, onClose }) => {
                       type="number"
                       min="10"
                       max="100"
-                      onChange={(e) => handleFontSizeChange(index, e.target.value)}
-                    /> px
+                      onChange={(e) =>
+                        handleFontSizeChange(index, e.target.value)
+                      }
+                    />{" "}
+                    px
                   </label>
                 </div>
               </div>
@@ -99,11 +112,16 @@ const ImagePage = ({ pdfSummary, onClose }) => {
           </div>
         </div>
 
-        {/* 오른쪽 하단에 위치한 확인과 저장 버튼 */}
         <div className="buttonContainer">
-          <button className="confirmButton" onClick={handleConfirmClick}>확인</button>
+          <button className="confirmButton" onClick={handleConfirmClick}>
+            확인
+          </button>
           <button className="saveButton" onClick={handleSaveImage}>
-            <img src={require('./image/imageDownload.png')} alt="저장" className="downloadIcon" />
+            <img
+              src={require("./image/imageDownload.png")}
+              alt="저장"
+              className="downloadIcon"
+            />
           </button>
         </div>
       </div>
