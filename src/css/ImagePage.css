@@ -56,6 +56,23 @@
   border-radius: 5px;
   z-index: 1001;
 }
+.floatingToolbar button {
+  background-color: #666;
+  color: #fff;
+  border: none;
+  padding: 5px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.floatingToolbar select {
+  padding: 5px;
+  border-radius: 5px;
+}
+
+.floatingToolbar button:hover {
+  background-color: #444;
+}
 
 .buttonContainer {
   display: flex;
