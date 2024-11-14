@@ -111,7 +111,6 @@ const ImagePage = ({ pdfSummary, selectedImageUrl, onClose }) => {
     <div className="modalImageOverlay" onClick={handleContainerClick}>
       <div className="modalImageContent">
         <h3>커스터마이즈된 포스터</h3>
-
         <div className="captureArea" onClick={(e) => e.stopPropagation()}>
           <img
             src={require("./image/imageExample.png")}
@@ -120,7 +119,7 @@ const ImagePage = ({ pdfSummary, selectedImageUrl, onClose }) => {
           />
           {/* 드래그 가능한 텍스트 오버레이 */}
           {splitSummary.map((sentence, index) => (
-            <Draggable key={index} bounds=".imagePreview">
+            <Draggable key={index} bounds=".captureArea">
               <div
                 className="overlayText"
                 style={{
@@ -137,54 +136,51 @@ const ImagePage = ({ pdfSummary, selectedImageUrl, onClose }) => {
           ))}
           {/* 떠다니는 툴바 */}
           {selectedTextIndex !== null && (
-  <div
-    className="floatingToolbar"
-    style={{ left: toolbarPosition.x, top: toolbarPosition.y }}
-    onClick={(e) => e.stopPropagation()}
-    data-html2canvas-ignore="true"
-  >
-    <label>
-      색상:
-      <input
-        type="color"
-        value={styles[selectedTextIndex]?.color || '#000'}
-        onChange={(e) => handleColorChange(e.target.value)}
-      />
-    </label>
-    <label>
-      글자 크기:
-      <input
-        type="number"
-        min="10"
-        max="100"
-        value={parseInt(styles[selectedTextIndex]?.fontSize) || 16}
-        onChange={(e) => handleFontSizeChange(e.target.value)}
-      />{' '}
-      px
-    </label>
-    <button onClick={handleBoldToggle}>
-      {styles[selectedTextIndex]?.fontWeight === 'bold' ? 'Normal' : 'Bold'}
-    </button>
-    <label>
-      폰트:
-      <select
-        onChange={(e) => handleFontFamilyChange(e.target.value)}
-        value={styles[selectedTextIndex]?.fontFamily || 'Arial'}
-      >
-        <option value="Arial">Arial</option>
-        <option value="Verdana">Verdana</option>
-        <option value="Times New Roman">Times New Roman</option>
-        <option value="Georgia">Georgia</option>
-        <option value="Courier New">Courier New</option>
-        {/* Add more fonts as desired */}
-      </select>
-    </label>
-  </div>
-)}
-
-
+              <div
+              className="floatingToolbar"
+              style={{ left: toolbarPosition.x, top: toolbarPosition.y }}
+              onClick={(e) => e.stopPropagation()}
+              data-html2canvas-ignore="true"
+            >
+              <label>
+                색상:
+                <input
+                  type="color"
+                  value={styles[selectedTextIndex]?.color || '#000'}
+                  onChange={(e) => handleColorChange(e.target.value)}
+                />
+              </label>
+              <label>
+                글자 크기:
+                <input
+                  type="number"
+                  min="10"
+                  max="100"
+                  value={parseInt(styles[selectedTextIndex]?.fontSize) || 16}
+                  onChange={(e) => handleFontSizeChange(e.target.value)}
+                />{' '}
+                px
+              </label>
+              <button onClick={handleBoldToggle}>
+                {styles[selectedTextIndex]?.fontWeight === 'bold' ? 'Normal' : 'Bold'}
+              </button>
+              <label>
+                폰트:
+                <select
+                  onChange={(e) => handleFontFamilyChange(e.target.value)}
+                  value={styles[selectedTextIndex]?.fontFamily || 'Arial'}
+                >
+                  <option value="Arial">Arial</option>
+                  <option value="Verdana">Verdana</option>
+                  <option value="Times New Roman">Times New Roman</option>
+                  <option value="Georgia">Georgia</option>
+                  <option value="Courier New">Courier New</option>
+                  {/* Add more fonts as desired */}
+                </select>
+              </label>
+            </div>
+          )}
         </div>
-
         {/* 확인과 저장 버튼 */}
         <div className="buttonContainer">
           <button className="confirmButton" onClick={handleConfirmClick}>
