@@ -1,39 +1,49 @@
-import React, { useState, useEffect } from 'react';
-import './css/ImagePage.css';
-import { useNavigate } from 'react-router-dom';
-import Draggable from 'react-draggable';
-import html2canvas from 'html2canvas';
+import React, { useState, useEffect } from "react";
+import "./css/ImagePage.css";
+import { useNavigate } from "react-router-dom";
+import Draggable from "react-draggable";
+import html2canvas from "html2canvas";
 
-const ImagePage = ({ pdfSummary, onClose }) => {
+const ImagePage = ({ pdfSummary, selectedImageUrl, onClose }) => {
   const navigate = useNavigate();
   const [splitSummary, setSplitSummary] = useState([]);
   const [styles, setStyles] = useState({});
   const [selectedTextIndex, setSelectedTextIndex] = useState(null);
   const [toolbarPosition, setToolbarPosition] = useState({ x: 0, y: 0 });
 
+  // 절대 경로로 변환 (선택된 이미지 URL이 상대 경로인 경우)
+  const absoluteImageUrl =
+    selectedImageUrl && selectedImageUrl.startsWith("http")
+      ? selectedImageUrl
+      : `http://223.194.133.27:3030/${selectedImageUrl}`;
+
   useEffect(() => {
+    console.log("Selected Image URL:", selectedImageUrl);
     if (pdfSummary) {
       setSplitSummary(
-        pdfSummary.split('-').map((sentence) => sentence.trim()).filter(Boolean)
+        pdfSummary
+          .split("-")
+          .map((sentence) => sentence.trim())
+          .filter(Boolean)
       );
     }
-  }, [pdfSummary]);
+  }, [pdfSummary, selectedImageUrl]);
 
   const handleConfirmClick = () => {
-    navigate('/send-message');
+    navigate("/send-message");
   };
 
   const handleSaveImage = () => {
-    const captureElement = document.querySelector('.captureArea');
+    const captureElement = document.querySelector(".captureArea");
 
     html2canvas(captureElement, {
       backgroundColor: null,
       useCORS: true,
       scale: 1,
     }).then((canvas) => {
-      const link = document.createElement('a');
-      link.href = canvas.toDataURL('image/png');
-      link.download = 'customized_image.png';
+      const link = document.createElement("a");
+      link.href = canvas.toDataURL("image/png");
+      link.download = "customized_image.png";
       link.click();
     });
   };
@@ -51,7 +61,10 @@ const ImagePage = ({ pdfSummary, onClose }) => {
     if (selectedTextIndex !== null) {
       setStyles((prevStyles) => ({
         ...prevStyles,
-        [selectedTextIndex]: { ...prevStyles[selectedTextIndex], fontSize: `${fontSize}px` },
+        [selectedTextIndex]: {
+          ...prevStyles[selectedTextIndex],
+          fontSize: `${fontSize}px`,
+        },
       }));
     }
   };
@@ -81,8 +94,13 @@ const ImagePage = ({ pdfSummary, onClose }) => {
     setSelectedTextIndex(index);
     // 툴바 위치 설정
     const rect = event.target.getBoundingClientRect();
-    const containerRect = document.querySelector('.captureArea').getBoundingClientRect();
-    setToolbarPosition({ x: rect.left - containerRect.left, y: rect.top - containerRect.top - 50 });
+    const containerRect = document
+      .querySelector(".captureArea")
+      .getBoundingClientRect();
+    setToolbarPosition({
+      x: rect.left - containerRect.left,
+      y: rect.top - containerRect.top - 50,
+    });
   };
 
   const handleContainerClick = () => {
@@ -96,7 +114,7 @@ const ImagePage = ({ pdfSummary, onClose }) => {
 
         <div className="captureArea" onClick={(e) => e.stopPropagation()}>
           <img
-            src={require('./image/imageExample.png')}
+            src={require("./image/imageExample.png")}
             alt="생성된 이미지"
             className="imagePreview"
           />
@@ -164,6 +182,7 @@ const ImagePage = ({ pdfSummary, onClose }) => {
   </div>
 )}
 
+
         </div>
 
         {/* 확인과 저장 버튼 */}
@@ -173,7 +192,7 @@ const ImagePage = ({ pdfSummary, onClose }) => {
           </button>
           <button className="saveButton" onClick={handleSaveImage}>
             <img
-              src={require('./image/imageDownload.png')}
+              src={require("./image/imageDownload.png")}
               alt="저장"
               className="downloadIcon"
             />

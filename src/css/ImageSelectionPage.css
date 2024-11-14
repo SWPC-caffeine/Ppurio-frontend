@@ -1,0 +1,50 @@
+/* src/css/ImageSelectionPage.css */
+.modalContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  position: relative;
+  height: 100%;
+}
+
+.imageGrid {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.imageOption {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: border-color 0.3s;
+}
+
+.imageOption.selected {
+  border-color: #007bff;
+}
+
+.closeButton {
+  margin-top: 20px;
+  padding: 5px 10px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.selectionNextButton {
+  position: fixed; /* 화면의 오른쪽 하단에 고정 */
+  bottom: 20px;
+  right: 20px;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+}

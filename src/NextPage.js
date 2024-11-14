@@ -1,11 +1,15 @@
-// NextPage.js
-import React, { useState, useEffect } from 'react';
-import Select from 'react-select';
-import './css/NextPage.css';  // 병합된 CSS 파일
+import React, { useState, useEffect } from "react";
+import Select from "react-select";
+import "./css/NextPage.css";
+import ImageSelectionPage from "./ImageSelectionPage";
+import ImagePage from "./ImagePage"; // ImagePage를 import합니다.
 
 const NextPage = ({ Content = "", onNext, onClose }) => {
   const [summaryContent, setSummaryContent] = useState(Content);
-  const [selectedFont, setSelectedFont] = useState('Arial');
+  const [selectedFont, setSelectedFont] = useState("Arial");
+  const [isImageSelectionOpen, setIsImageSelectionOpen] = useState(false);
+  const [selectedImageUrl, setSelectedImageUrl] = useState(null); // 선택된 이미지 URL 상태 추가
+  const [isImagePageOpen, setIsImagePageOpen] = useState(false); // ImagePage를 표시하는 상태
 
   useEffect(() => {
     if (Content) {
@@ -21,27 +25,29 @@ const NextPage = ({ Content = "", onNext, onClose }) => {
     setSelectedFont(selectedOption.value);
   };
 
-  // 폰트 목록
-  const fonts = [
-    'Arial',
-    'Times New Roman',
-    'Georgia',
-    'Courier New',
-    'Verdana',
-    'Tahoma',
-    'Trebuchet MS',
-    'Lucida Console',
-    'Comic Sans MS',
-    '궁서' // 예시로 궁서체 추가
+  const fontOptions = [
+    { value: "Arial", label: "Arial" },
+    { value: "Times New Roman", label: "Times New Roman" },
+    { value: "Georgia", label: "Georgia" },
+    { value: "Courier New", label: "Courier New" },
+    { value: "Verdana", label: "Verdana" },
+    { value: "Tahoma", label: "Tahoma" },
+    { value: "Trebuchet MS", label: "Trebuchet MS" },
+    { value: "Lucida Console", label: "Lucida Console" },
+    { value: "Comic Sans MS", label: "Comic Sans MS" },
+    { value: "궁서", label: "궁서" },
   ];
 
-  // 폰트 옵션 생성
-  const fontOptions = fonts.map((font) => ({
-    value: font,
-    label: font,
-  }));
+  const handleOpenImageSelection = () => {
+    setIsImageSelectionOpen(true);
+  };
 
-  // 커스텀 스타일 적용
+  const handleSelectImage = (url) => {
+    setSelectedImageUrl(url); // 선택된 이미지 URL 상태 업데이트
+    setIsImageSelectionOpen(false); // 이미지 선택 페이지 닫기
+    setIsImagePageOpen(true); // ImagePage를 열기 위해 상태를 true로 설정
+  };
+
   const customStyles = {
     option: (provided, state) => ({
       ...provided,
@@ -53,16 +59,14 @@ const NextPage = ({ Content = "", onNext, onClose }) => {
     }),
     menu: (provided) => ({
       ...provided,
-      zIndex: 9999, // 드롭다운 메뉴가 다른 요소 위에 표시되도록 설정
+      zIndex: 9999,
     }),
   };
 
   return (
     <div className="modalOverlay">
       <div className="modalContent">
-        {/* 요약 화면 */}
         <div className="pdfSection">
-          {/* PDF 요약 내용 */}
           <div className="pdfSummary">
             <div className="pdfTitle">요약</div>
             <textarea
@@ -72,24 +76,39 @@ const NextPage = ({ Content = "", onNext, onClose }) => {
               rows="10"
               style={{ fontFamily: selectedFont }}
             />
-            {/* 폰트 선택 드롭다운 */}
             <div className="fontSelector">
               <label htmlFor="fontSelect">폰트: </label>
-              <div className="fontSelectWrapper">
-                <Select
-                  id="fontSelect"
-                  options={fontOptions}
-                  value={{ value: selectedFont, label: selectedFont }}
-                  onChange={handleFontChange}
-                  styles={customStyles}
-                  menuPlacement="top" // 드롭다운 메뉴가 위로 열리도록 설정 (필요에 따라 조정)
-                />
-              </div>
+              <Select
+                id="fontSelect"
+                options={fontOptions}
+                value={{ value: selectedFont, label: selectedFont }}
+                onChange={handleFontChange}
+                styles={customStyles}
+                menuPlacement="top"
+              />
             </div>
           </div>
-          {/* '다음' 버튼 */}
-          <button className="nextButton2" onClick={onNext}>다음</button>
+          <button className="nextButton2" onClick={handleOpenImageSelection}>
+            이미지 선택
+          </button>
         </div>
+
+        {/* 이미지 선택 모달 */}
+        {isImageSelectionOpen && (
+          <ImageSelectionPage
+            onSelectImage={handleSelectImage} // 선택한 이미지를 전달받기 위해 props로 설정
+            onClose={() => setIsImageSelectionOpen(false)}
+          />
+        )}
+
+        {/* 선택된 이미지를 사용해 ImagePage를 렌더링 */}
+        {isImagePageOpen && (
+          <ImagePage
+            pdfSummary={summaryContent}
+            selectedImageUrl={selectedImageUrl} // 선택된 이미지 URL을 전달
+            onClose={() => setIsImagePageOpen(false)}
+          />
+        )}
       </div>
     </div>
   );
