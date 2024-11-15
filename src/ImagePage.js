@@ -12,10 +12,9 @@ const ImagePage = ({ pdfSummary, selectedImageUrl, onClose }) => {
   const [toolbarPosition, setToolbarPosition] = useState({ x: 0, y: 0 });
 
   // 절대 경로로 변환 (선택된 이미지 URL이 상대 경로인 경우)
-  const absoluteImageUrl =
-    selectedImageUrl && selectedImageUrl.startsWith("http")
-      ? selectedImageUrl
-      : `http://223.194.133.27:3030/${selectedImageUrl}`;
+  const absoluteImageUrl = selectedImageUrl.startsWith("http")
+    ? selectedImageUrl
+    : `http://223.194.133.27:3030/${selectedImageUrl}`;
 
   useEffect(() => {
     console.log("Selected Image URL:", selectedImageUrl);
@@ -94,10 +93,11 @@ const ImagePage = ({ pdfSummary, selectedImageUrl, onClose }) => {
 
         <div className="captureArea" onClick={(e) => e.stopPropagation()}>
           <img
-            src={require("./image/imageExample.png")}
+            src={absoluteImageUrl} // 선택한 이미지 URL을 사용
             alt="생성된 이미지"
             className="imagePreview"
           />
+
           {/* 드래그 가능한 텍스트 오버레이 */}
           {splitSummary.map((sentence, index) => (
             <Draggable key={index} bounds=".imagePreview">
