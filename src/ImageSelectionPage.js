@@ -54,7 +54,7 @@ const ImageSelectionPage = ({ onSelectImage, onClose }) => {
           )}
         </div>
 
-        <button className="nextButton" onClick={handleNextClick}>
+        <button className="selectionNextButton" onClick={handleNextClick}>
           다음
         </button>
         <button className="closeButton" onClick={onClose}>
