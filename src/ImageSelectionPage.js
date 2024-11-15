@@ -9,12 +9,12 @@ const ImageSelectionPage = ({ onSelectImage, onClose }) => {
     fetch("http://223.194.133.27:3030/create", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ text: "포스터 요약 텍스트" }),
+      body: JSON.stringify({ text: summaryContent.join(" ") }), // 요약된 텍스트 전송
     })
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
-          setImageUrls(data.imagePaths);
+          setImageUrls(data.imagePaths); // 서버에서 받은 이미지 경로들
         }
       })
       .catch((error) => console.error("이미지 로드 실패:", error));
@@ -26,7 +26,7 @@ const ImageSelectionPage = ({ onSelectImage, onClose }) => {
 
   const handleNextClick = () => {
     if (selectedImage) {
-      onSelectImage(selectedImage);
+      onSelectImage(selectedImage); // 선택한 이미지를 ImagePage.js로 전달
     } else {
       alert("이미지를 선택해주세요.");
     }
@@ -41,7 +41,7 @@ const ImageSelectionPage = ({ onSelectImage, onClose }) => {
             imageUrls.map((url, index) => (
               <img
                 key={index}
-                src={url}
+                src={url} // 서버에서 제공한 이미지 경로
                 alt={`Option ${index + 1}`}
                 className={`imageOption ${
                   selectedImage === url ? "selected" : ""
