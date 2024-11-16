@@ -14,7 +14,7 @@ const ImagePage = ({ pdfSummary, selectedImageUrl, onClose }) => {
   // 절대 경로로 변환 (선택된 이미지 URL이 상대 경로인 경우)
   const absoluteImageUrl = selectedImageUrl.startsWith("http")
     ? selectedImageUrl
-    : `http://223.194.133.27:3030/${selectedImageUrl}`;
+    : `${process.env.REACT_APP_SERVER_IP}/${selectedImageUrl}`;
 
   useEffect(() => {
     console.log("Selected Image URL:", selectedImageUrl);

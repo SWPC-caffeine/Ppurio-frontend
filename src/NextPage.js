@@ -96,6 +96,7 @@ const NextPage = ({ Content = "", onNext, onClose }) => {
         {/* 이미지 선택 모달 */}
         {isImageSelectionOpen && (
           <ImageSelectionPage
+            summaryContent={summaryContent}
             onSelectImage={handleSelectImage} // 선택한 이미지를 전달받기 위해 props로 설정
             onClose={() => setIsImageSelectionOpen(false)}
           />
