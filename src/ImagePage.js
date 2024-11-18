@@ -15,7 +15,7 @@ const ImagePage = ({ pdfSummary, selectedImageUrl, onClose }) => {
   const absoluteImageUrl =
     selectedImageUrl && selectedImageUrl.startsWith("http")
       ? selectedImageUrl
-      : `http://223.194.133.27:3030/${selectedImageUrl}`;
+      : `${process.env.REACT_APP_SERVER_IP}:3030/${selectedImageUrl}`;
 
   useEffect(() => {
     console.log("Selected Image URL:", selectedImageUrl);
@@ -175,6 +175,11 @@ const ImagePage = ({ pdfSummary, selectedImageUrl, onClose }) => {
                   <option value="Times New Roman">Times New Roman</option>
                   <option value="Georgia">Georgia</option>
                   <option value="Courier New">Courier New</option>
+                  <option value="BlackHanSans-Regular">BlackHanSans-Regular</option>
+                  <option value="CookieRun Black">CookieRun Black</option>
+                  <option value="CookieRun Bold">CookieRun Bold</option>
+                  <option value="CookieRun Regular">CookieRun Regular</option>
+                  <option value="양진체v0.9_otf">양진체v0.9_otf</option>
                   {/* Add more fonts as desired */}
                 </select>
               </label>

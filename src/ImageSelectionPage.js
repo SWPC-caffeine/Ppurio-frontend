@@ -6,7 +6,7 @@ const ImageSelectionPage = ({ onSelectImage, onClose }) => {
   const [selectedImage, setSelectedImage] = useState(null);
 
   useEffect(() => {
-    fetch("http://223.194.133.27:3030/create", {
+    fetch(`${process.env.REACT_APP_SERVER_IP}/create`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ text: "포스터 요약 텍스트" }),
