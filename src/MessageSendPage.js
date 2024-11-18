@@ -1,9 +1,9 @@
 // MessageSendPage.js
-import React, { useState } from 'react';
-import './css/MessageSendPage.css';
-import phoneImg from './image/phoneImg.png';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
+import React, { useState } from "react";
+import "./css/MessageSendPage.css";
+import phoneImg from "./image/phoneImg.png";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import { useLocation } from "react-router-dom";
 
 // 수신자 리스트 컴포넌트 분리
@@ -14,7 +14,11 @@ const RecipientList = ({ recipients, onRemove, onClear }) => (
       {recipients.map((recipient) => (
         <div key={recipient} className="recipient-item">
           {recipient}
-          <button onClick={() => onRemove(recipient)} className="remove-button" aria-label="번호 제거">
+          <button
+            onClick={() => onRemove(recipient)}
+            className="remove-button"
+            aria-label="번호 제거"
+          >
             x
           </button>
         </div>
@@ -34,34 +38,34 @@ const isValidPhoneNumber = (number) => {
 
 const MessageSendPage = () => {
   const location = useLocation();
-const { imageBlobUrl, serverFileUrl, pdfSummary } = location.state || {}; // ImagePage에서 전달된 데이터
-  const [inputValue, setInputValue] = useState('');
+  const { imageBlobUrl, serverFileUrl, pdfSummary } = location.state || {}; // ImagePage에서 전달된 데이터
+  const [inputValue, setInputValue] = useState("");
   const [recipients, setRecipients] = useState([]);
   const [sendOption, setSendOption] = useState(null); // 'now' 또는 'scheduled'
   const [scheduledDate, setScheduledDate] = useState(null);
-  const [alertMessage, setAlertMessage] = useState('');
+  const [alertMessage, setAlertMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   // 번호 추가
   const handleAddRecipient = () => {
     const numbers = inputValue
-      .split('\n')
+      .split("\n")
       .map((num) => num.trim())
       .filter((num) => num && isValidPhoneNumber(num));
 
     if (numbers.length === 0) {
-      setAlertMessage('올바른 전화번호를 입력해 주세요.');
+      setAlertMessage("올바른 전화번호를 입력해 주세요.");
       return;
     }
 
     setRecipients([...new Set([...recipients, ...numbers])]);
-    setInputValue('');
-    setAlertMessage('');
+    setInputValue("");
+    setAlertMessage("");
   };
 
   // Enter 키 입력 처리
   const handleKeyPress = (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleAddRecipient();
     }
@@ -79,56 +83,56 @@ const { imageBlobUrl, serverFileUrl, pdfSummary } = location.state || {}; // Ima
 
   // 즉시 발송 선택
   const handleSendNowClick = () => {
-    setSendOption('now');
+    setSendOption("now");
     setScheduledDate(null);
   };
 
   // 예약 발송 선택
   const handleSendScheduledClick = () => {
-    setSendOption('scheduled');
+    setSendOption("scheduled");
   };
 
   // 메시지 전송 처리
   const handleSendClick = async () => {
-    // 검증 로직
     if (recipients.length === 0) {
-      setAlertMessage('수신번호가 하나도 등록되어 있지 않습니다.');
+      setAlertMessage("수신번호가 하나도 등록되어 있지 않습니다.");
       return;
     }
     if (!sendOption) {
-      setAlertMessage('즉시 발송 또는 예약 발송을 선택해 주세요.');
+      setAlertMessage("즉시 발송 또는 예약 발송을 선택해 주세요.");
       return;
     }
-  
+
     setIsLoading(true);
     try {
-      // FormData 생성
-      const formData = new FormData();
-      formData.append("messageContent", pdfSummary); // 메시지 내용
-      formData.append("recipient", recipients.join(",")); // 수신자 (쉼표로 구분)
-      formData.append("fileUrl", serverFileUrl); // 이미지 URL
-      formData.append("fileName", "customized_image.png"); // 이미지 파일 이름
-      console.log("Sending data:", {
-        messageContent: pdfSummary,
-        recipient: recipients.join(","),
-        fileUrl: serverFileUrl,
-        fileName: "customized_image.png",
-      });
+      const recipientsArray = recipients.map((recipient) => ({
+        to: recipient,
+        name: recipient,
+        changeWord: { var1: "치환 문자 예시" },
+      }));
 
-      // API 호출
-      const response = await fetch(`${process.env.REACT_APP_SERVER_IP}/send-mms`, {
-        method: "POST",
-        body: formData,
-      });
-  
+      const formData = new FormData();
+      formData.append("messageContent", pdfSummary);
+      formData.append("sender", "01084356517"); // 발신번호
+      formData.append("file", document.getElementById("file-input").files[0]); // 파일 선택
+      formData.append("recipients", JSON.stringify(recipientsArray)); // 수신자 배열
+
+      const response = await fetch(
+        `${process.env.REACT_APP_SERVER_IP}/send-mms`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+
       if (!response.ok) {
         throw new Error("메시지 전송에 실패했습니다.");
       }
-  
+
       const result = await response.json();
       console.log("메시지 전송 성공:", result);
       setAlertMessage("메시지를 성공적으로 보냈습니다.");
-      setRecipients([]); // 초기화
+      setRecipients([]);
       setSendOption(null);
       setScheduledDate(null);
     } catch (error) {
@@ -138,12 +142,15 @@ const { imageBlobUrl, serverFileUrl, pdfSummary } = location.state || {}; // Ima
       setIsLoading(false);
     }
   };
-  
 
   return (
     <div className="message-send-container">
       <div className="phone-preview">
-        <img src={phoneImg} alt="휴대폰" style={{ width: '150%', height: '100%' }} />
+        <img
+          src={phoneImg}
+          alt="휴대폰"
+          style={{ width: "150%", height: "100%" }}
+        />
 
         {/* 휴대폰 화면 위에 blob 이미지와 pdfSummary 표시 */}
         <div className="content-overlay">
@@ -185,7 +192,11 @@ const { imageBlobUrl, serverFileUrl, pdfSummary } = location.state || {}; // Ima
               onKeyDown={handleKeyPress}
               aria-label="전화번호 입력"
             />
-            <button className="add-button" onClick={handleAddRecipient} aria-label="번호 추가">
+            <button
+              className="add-button"
+              onClick={handleAddRecipient}
+              aria-label="번호 추가"
+            >
               번호 추가 +
             </button>
           </div>
@@ -199,14 +210,16 @@ const { imageBlobUrl, serverFileUrl, pdfSummary } = location.state || {}; // Ima
 
         <div className="send-options">
           <button
-            className={`send-now ${sendOption === 'now' ? 'active' : ''}`}
+            className={`send-now ${sendOption === "now" ? "active" : ""}`}
             onClick={handleSendNowClick}
             aria-label="즉시 발송"
           >
             즉시 발송
           </button>
           <button
-            className={`send-scheduled ${sendOption === 'scheduled' ? 'active' : ''}`}
+            className={`send-scheduled ${
+              sendOption === "scheduled" ? "active" : ""
+            }`}
             onClick={handleSendScheduledClick}
             aria-label="예약 발송"
           >
@@ -214,7 +227,7 @@ const { imageBlobUrl, serverFileUrl, pdfSummary } = location.state || {}; // Ima
           </button>
         </div>
 
-        {sendOption === 'scheduled' && (
+        {sendOption === "scheduled" && (
           <div className="date-picker">
             <label htmlFor="date-picker">보낼 날짜와 시간: </label>
             <DatePicker
@@ -230,8 +243,13 @@ const { imageBlobUrl, serverFileUrl, pdfSummary } = location.state || {}; // Ima
 
         {alertMessage && <div className="alert-message">{alertMessage}</div>}
 
-        <button className="send-button" onClick={handleSendClick} disabled={isLoading} aria-label="보내기">
-          {isLoading ? '전송 중...' : '보내기'}
+        <button
+          className="send-button"
+          onClick={handleSendClick}
+          disabled={isLoading}
+          aria-label="보내기"
+        >
+          {isLoading ? "전송 중..." : "보내기"}
         </button>
       </div>
     </div>
