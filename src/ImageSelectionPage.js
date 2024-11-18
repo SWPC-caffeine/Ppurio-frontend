@@ -13,9 +13,10 @@ const ImageSelectionPage = ({ onSelectImage, onClose, summaryContent }) => {
     })
       .then((response) => response.json())
       .then((data) => {
-        if (data.success && data.imageUrls) {  // 'imageUrls'로 변경
-          // imageUrls가 배열로 직접 전달되므로 바로 사용
-          setImageUrls(data.imageUrls);  // 서버에서 받은 이미지 URL들을 imageUrls 상태에 저장
+        if (data.success && data.imageUrls) {
+          // 쉼표로 구분된 문자열을 배열로 변환
+          const imageArray = data.imageUrls.split(',');  
+          setImageUrls(imageArray);  // 배열로 변환한 값을 상태에 저장
         } else {
           console.error("서버 응답에 imageUrls가 없습니다.", data);  // 디버깅용
         }
@@ -24,7 +25,7 @@ const ImageSelectionPage = ({ onSelectImage, onClose, summaryContent }) => {
         console.error("이미지 로드 실패:", error);  // 오류 처리
       });
   }, [summaryContent]);  // summaryContent가 변경될 때마다 effect가 실행됨
-
+  
   const handleImageClick = (url) => {
     setSelectedImage(url);  // 선택한 이미지 URL을 상태에 저장
   };
