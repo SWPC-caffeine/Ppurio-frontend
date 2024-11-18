@@ -107,25 +107,35 @@ const MessageSendPage = () => {
     try {
       const recipientsArray = recipients.map((recipient) => ({
         to: recipient,
-        name: recipient,
+        name: "김철수",
         changeWord: { var1: "치환 문자 예시" },
       }));
+      const fileName = serverFileUrl.split("/").pop();
 
-      const formData = new FormData();
-      formData.append("messageContent", pdfSummary);
-      formData.append("sender", "01084356517"); // 발신번호
-      formData.append("file", document.getElementById("file-input").files[0]); // 파일 선택
-      formData.append("recipients", JSON.stringify(recipientsArray)); // 수신자 배열
+      const requestData = {
+        messageContent: pdfSummary || "",
+        sender: "01084356517", // 발신번호
+        recipients: recipientsArray,
+        fileUrl: serverFileUrl,
+        fileName: fileName,
+      };
+
+      console.log("전송 데이터:", requestData);
 
       const response = await fetch(
-        `${process.env.REACT_APP_SERVER_IP}/send-mms`,
+      `${process.env.REACT_APP_SERVER_IP}/send-mms`,
         {
           method: "POST",
-          body: formData,
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(requestData), // JSON 데이터 전송
         }
       );
 
       if (!response.ok) {
+        const errorMessage = await response.text(); // 백엔드가 반환한 에러 메시지
+        console.error("백엔드 응답 에러:", errorMessage);
         throw new Error("메시지 전송에 실패했습니다.");
       }
 
