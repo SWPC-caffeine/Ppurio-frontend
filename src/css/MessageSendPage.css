@@ -51,15 +51,10 @@
 }
 
 .message-content {
-  width: 90%;
-  height: 45%;
-  background-color: #f0f0f0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-  font-weight: bold;
-  border-radius: 8px;
+  font-size: 16px;
+  color: #000;
+  text-align: center;
+  overflow: auto;
 }
 
 /* 전체 우측 부분 너비 확장 */

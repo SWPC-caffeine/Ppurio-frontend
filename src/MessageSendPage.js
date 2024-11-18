@@ -4,6 +4,7 @@ import './css/MessageSendPage.css';
 import phoneImg from './image/phoneImg.png';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import { useLocation } from "react-router-dom";
 
 // 수신자 리스트 컴포넌트 분리
 const RecipientList = ({ recipients, onRemove, onClear }) => (
@@ -32,6 +33,8 @@ const isValidPhoneNumber = (number) => {
 };
 
 const MessageSendPage = () => {
+  const location = useLocation();
+const { imageBlobUrl, serverFileUrl, pdfSummary } = location.state || {}; // ImagePage에서 전달된 데이터
   const [inputValue, setInputValue] = useState('');
   const [recipients, setRecipients] = useState([]);
   const [sendOption, setSendOption] = useState(null); // 'now' 또는 'scheduled'
@@ -96,43 +99,75 @@ const MessageSendPage = () => {
       setAlertMessage('즉시 발송 또는 예약 발송을 선택해 주세요.');
       return;
     }
-    if (sendOption === 'scheduled' && !scheduledDate) {
-      setAlertMessage('예약 발송을 선택한 경우, 보낼 날짜와 시간을 선택해 주세요.');
-      return;
-    }
-
+  
     setIsLoading(true);
     try {
-      // 실제 메시지 전송 API 호출 로직이 들어갈 곳
-      // 예를 들면: await sendMessageAPI({ recipients, scheduledDate });
+      // FormData 생성
+      const formData = new FormData();
+      formData.append("messageContent", pdfSummary); // 메시지 내용
+      formData.append("recipient", recipients.join(",")); // 수신자 (쉼표로 구분)
+      formData.append("fileUrl", serverFileUrl); // 이미지 URL
+      formData.append("fileName", "customized_image.png"); // 이미지 파일 이름
+      console.log("Sending data:", {
+        messageContent: pdfSummary,
+        recipient: recipients.join(","),
+        fileUrl: serverFileUrl,
+        fileName: "customized_image.png",
+      });
 
-      setAlertMessage('메시지를 성공적으로 보냈습니다.');
-      setRecipients([]);
+      // API 호출
+      const response = await fetch(`${process.env.REACT_APP_SERVER_IP}/send-mms`, {
+        method: "POST",
+        body: formData,
+      });
+  
+      if (!response.ok) {
+        throw new Error("메시지 전송에 실패했습니다.");
+      }
+  
+      const result = await response.json();
+      console.log("메시지 전송 성공:", result);
+      setAlertMessage("메시지를 성공적으로 보냈습니다.");
+      setRecipients([]); // 초기화
       setSendOption(null);
       setScheduledDate(null);
     } catch (error) {
-      setAlertMessage('메시지 전송에 실패했습니다.');
+      console.error("메시지 전송 에러:", error);
+      setAlertMessage("메시지 전송에 실패했습니다.");
     } finally {
       setIsLoading(false);
     }
   };
+  
 
   return (
     <div className="message-send-container">
       <div className="phone-preview">
         <img src={phoneImg} alt="휴대폰" style={{ width: '150%', height: '100%' }} />
 
-        {/* 휴대폰 화면 위에 문자와 이미지 위치 */}
+        {/* 휴대폰 화면 위에 blob 이미지와 pdfSummary 표시 */}
         <div className="content-overlay">
-          <div className="image-content">이미지</div>
-          <div className="message-content">메시지</div>
+          {imageBlobUrl && (
+            <div className="image-content">
+              <img
+                src={imageBlobUrl}
+                alt="보내는 이미지"
+                style={{ maxWidth: "100%", height: "auto" }}
+              />
+            </div>
+          )}
+          {pdfSummary && (
+            <div className="message-content" style={{ whiteSpace: "pre-wrap" }}>
+              {pdfSummary}
+            </div>
+          )}
         </div>
       </div>
 
       <div className="send-settings">
         <h3>발신번호 설정</h3>
         <button className="sender-number" aria-label="발신번호">
-          010-1234-5678
+          010-8435-6517
         </button>
 
         <h3>수신번호 설정</h3>
