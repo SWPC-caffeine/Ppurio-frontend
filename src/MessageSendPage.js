@@ -1,3 +1,4 @@
+// MessageSendPage.js
 import React, { useState } from "react";
 import "./css/MessageSendPage.css";
 import phoneImg from "./image/phoneImg.png";
@@ -31,7 +32,7 @@ const RecipientList = ({ recipients, onRemove, onClear }) => (
 
 // 전화번호 유효성 검사 함수
 const isValidPhoneNumber = (number) => {
-  const phoneRegex = /^01[0-9]-\d{3,4}-\d{4}$/;
+  const phoneRegex = /^01[0-9]\d{3,4}\d{4}$/;
   return phoneRegex.test(number);
 };
 
@@ -102,46 +103,43 @@ const MessageSendPage = () => {
       return;
     }
 
-    // 이미지가 화면에 표시되고 있는지 확인
-    if (!imageBlobUrl) {
-      setAlertMessage("이미지가 표시되지 않았습니다.");
-      return;
-    }
-
     setIsLoading(true);
     try {
       const recipientsArray = recipients.map((recipient) => ({
         to: recipient,
-        name: recipient,
+        name: "김철수",
         changeWord: { var1: "치환 문자 예시" },
       }));
+      const fileName = serverFileUrl.split("/").pop();
 
-      // 이미지 Blob URL을 실제 Blob 객체로 변환
-      const response = await fetch(imageBlobUrl);
-      const imageBlob = await response.blob();
-      const imageFile = new File([imageBlob], "image.png", {
-        type: imageBlob.type,
-      });
+      const requestData = {
+        messageContent: pdfSummary || "",
+        sender: "01084356517", // 발신번호
+        recipients: recipientsArray,
+        fileUrl: serverFileUrl,
+        fileName: fileName,
+      };
 
-      const formData = new FormData();
-      formData.append("messageContent", pdfSummary);
-      formData.append("sender", "01084356517"); // 발신번호
-      formData.append("file", imageFile); // 화면에 표시된 이미지 파일로 추가
-      formData.append("recipients", JSON.stringify(recipientsArray)); // 수신자 배열
+      console.log("전송 데이터:", requestData);
 
-      const sendResponse = await fetch(
+      const response = await fetch(
         `${process.env.REACT_APP_SERVER_IP}/send-mms`,
         {
           method: "POST",
-          body: formData,
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(requestData), // JSON 데이터 전송
         }
       );
 
-      if (!sendResponse.ok) {
+      if (!response.ok) {
+        const errorMessage = await response.text(); // 백엔드가 반환한 에러 메시지
+        console.error("백엔드 응답 에러:", errorMessage);
         throw new Error("메시지 전송에 실패했습니다.");
       }
 
-      const result = await sendResponse.json();
+      const result = await response.json();
       console.log("메시지 전송 성공:", result);
       setAlertMessage("메시지를 성공적으로 보냈습니다.");
       setRecipients([]);
