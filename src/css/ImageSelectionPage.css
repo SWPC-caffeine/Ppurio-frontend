@@ -1,4 +1,3 @@
-/* src/css/ImageSelectionPage.css */
 .modalContent {
   display: flex;
   flex-direction: column;
@@ -9,16 +8,16 @@
 }
 
 .imageGrid {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* 2개의 열 */
+  gap: 30px; /* 간격 */
   justify-content: center;
   margin-top: 20px;
 }
 
 .imageOption {
-  width: 100px;
-  height: 100px;
+  width: 200px; /* 이미지 크기 확대 */
+  height: 200px; /* 이미지 크기 확대 */
   object-fit: cover;
   cursor: pointer;
   border: 2px solid transparent;
@@ -37,14 +36,66 @@
 }
 
 .selectionNextButton {
-  position: center; /* 화면의 오른쪽 하단에 고정 */
-  bottom: 20px;
-  right: 20px;
-  padding: 10px 20px;
-  font-size: 16px;
+  position: absolute;
+  bottom: 6%; /* regenerateButton과 동일한 높이 */
+  right: 20%; /* regenerateButton과 대칭 */
+  transform: translateX(50%); /* 중앙에서 오른쪽 정렬 보정 */
+  padding: 10px 20px; /* 버튼 크기 */
+  font-size: 14px; /* 글씨 크기 */
   cursor: pointer;
-  background-color: #007bff;
-  color: #fff;
+  background-color: #007bff; /* 파란색 */
+  color: white;
   border: none;
-  border-radius: 5px;
+  border-radius: 8px; /* 살짝 둥글게 */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s ease, transform 0.2s;
+}
+
+.selectionNextButton:hover {
+  background-color: #0056b3; /* 호버 시 더 어두운 파란색 */
+  transform: translateX(50%) scale(1.05); /* 살짝 커짐 */
+}
+
+.progressBarWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+.progressBar {
+  width: 80%;
+  height: 30px; /* 두께를 30px로 늘림 */
+  background-color: #e0e0e0;
+  border-radius: 15px; /* 더 둥글게 만들기 */
+  overflow: hidden;
+  position: relative;
+}
+
+.progressBarFill {
+  height: 100%;
+  background-color: #007bff;
+  transition: width 0.2s ease;
+}
+
+.regenerateButton {
+  position: absolute;
+  bottom: 6%; /* 화면 하단에서 약간 위로 */
+  left: 25%; /* 가운데에서 살짝 왼쪽으로 이동 */
+  transform: translateX(-50%); /* 가운데 정렬 보정 */
+  padding: 10px 20px; /* 크기 */
+  font-size: 14px; /* 글씨 크기 */
+  cursor: pointer;
+  background-color: #ff69b4; /* 핑크색 */
+  color: white;
+  border: none;
+  border-radius: 8px; /* 살짝 둥글게 */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s ease, transform 0.2s;
+}
+
+.regenerateButton:hover {
+  background-color: #ff85c1; /* 호버 시 밝은 핑크 */
+  transform: translateX(-50%) scale(1.05); /* 살짝 커짐 */
 }

@@ -1,34 +1,43 @@
 import React, { useState, useRef } from "react";
-import './css/MainScreen.css';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
-import NextPage from './NextPage';
-import ImagePage from './ImagePage';
-import LoadingSpinner from './loadingSpinner'; // 로딩 스피너 임포트
-import mammoth from "mammoth"; // Mammoth.js 임포트
+import "./css/MainScreen.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrashAlt } from "@fortawesome/free-solid-svg-icons";
+import NextPage from "./NextPage";
+import ImagePage from "./ImagePage";
+import { CircularProgressbar, buildStyles } from "react-circular-progressbar"; // 원형 차트
+import "react-circular-progressbar/dist/styles.css"; // 스타일
+import mammoth from "mammoth";
 
 const MainScreen = () => {
   const [file, setFile] = useState(null);
   const [fileName, setFileName] = useState("");
-  const [userText, setUserText] = useState("");  // 프롬프트 텍스트 입력 상태 추가
-  const [previewContent, setPreviewContent] = useState(""); // 미리보기 콘텐츠 상태 추가
-  const [summaryContent, setSummaryContent] = useState("");  // 요약 내용 상태 추가
+  const [userText, setUserText] = useState("");
+  const [previewContent, setPreviewContent] = useState("");
+  const [summaryContent, setSummaryContent] = useState("");
   const fileInputRef = useRef(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [view, setView] = useState('next');
-  const [isLoading, setIsLoading] = useState(false); // 로딩 상태 추가
+  const [view, setView] = useState("next");
+  const [isLoading, setIsLoading] = useState(false);
+  const [loadingProgress, setLoadingProgress] = useState(0); // 로딩 진행도
 
   const handleFileChange = async (file) => {
     if (file) {
-      setFile(file);  // setFile을 통해 실제 파일 객체 저장
+      setFile(file);
       setFileName(file.name);
-      setPreviewContent(""); // 기존 미리보기 내용 초기화
+      setPreviewContent("");
 
-      // 파일 형식에 따라 미리보기 처리
       if (file.type === "application/pdf") {
-        setPreviewContent(<iframe src={URL.createObjectURL(file)} title="file-preview" className="pdfPreview" />);
-      } else if (file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document") {
-        // .docx 파일 처리
+        setPreviewContent(
+          <iframe
+            src={URL.createObjectURL(file)}
+            title="file-preview"
+            className="pdfPreview"
+          />
+        );
+      } else if (
+        file.type ===
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+      ) {
         await handleWordFilePreview(file);
       } else {
         setPreviewContent(<p>미리보기가 지원되지 않는 파일 형식입니다.</p>);
@@ -40,7 +49,9 @@ const MainScreen = () => {
     try {
       const arrayBuffer = await file.arrayBuffer();
       const result = await mammoth.convertToHtml({ arrayBuffer });
-      setPreviewContent(<div dangerouslySetInnerHTML={{ __html: result.value }} />); // 변환된 HTML 설정
+      setPreviewContent(
+        <div dangerouslySetInnerHTML={{ __html: result.value }} />
+      );
     } catch (error) {
       console.error("Word 파일 변환 중 오류 발생:", error);
       setPreviewContent(<p>Word 파일을 변환하는 데 실패했습니다.</p>);
@@ -50,37 +61,50 @@ const MainScreen = () => {
   const handleFileDelete = () => {
     setFile(null);
     setFileName("");
-    setPreviewContent(""); // 미리보기 내용 초기화
+    setPreviewContent("");
     fileInputRef.current.value = null;
   };
 
   const handleNextClick = async () => {
     if (!file || !userText) {
-      alert("파일과 텍스트를 모두 입력해주세요.");
       return;
     }
 
     setIsLoading(true);
+    setLoadingProgress(0); // 진행도 초기화
+
     const formData = new FormData();
     formData.append("file", file);
     formData.append("userText", userText);
+
     try {
-      const response = await fetch(`${process.env.REACT_APP_SERVER_IP}/upload`, {
-        method: "POST",
-        body: formData,
-      });
+      // 로딩 진행도 증가
+      const interval = setInterval(() => {
+        setLoadingProgress((prev) => {
+          if (prev >= 100) {
+            clearInterval(interval);
+            return 100;
+          }
+          return prev + 10;
+        });
+      }, 200); // 200ms마다 10%씩 증가
+
+      const response = await fetch(
+        `${process.env.REACT_APP_SERVER_IP}/upload`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
       if (!response.ok) {
         throw new Error("파일 업로드에 실패했습니다.");
       }
-      alert("파일이 성공적으로 업로드되었습니다.");
-      // JSON 응답 처리
-      const data = await response.json();  // JSON 데이터 파싱
-      console.log('요약된 내용:', data.summary);  // 요약된 텍스트 확인
-      setSummaryContent(data.summary);  // 예: 요약 텍스트를 상태에 저장
+
+      const data = await response.json();
+      setSummaryContent(data.summary);
       setIsModalOpen(true);
     } catch (error) {
       console.error("업로드 중 오류 발생:", error);
-      alert("파일 업로드에 실패했습니다. 사유: 파일 크기나 형식 문제일 수 있습니다.");
     } finally {
       setIsLoading(false);
     }
@@ -88,7 +112,7 @@ const MainScreen = () => {
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
-    setView('next');
+    setView("next");
   };
 
   const handleDragOver = (e) => {
@@ -103,24 +127,22 @@ const MainScreen = () => {
     const droppedFile = e.dataTransfer.files[0];
     if (droppedFile && isValidFileType(droppedFile)) {
       handleFileChange(droppedFile);
-    } else {
-      alert("지원되는 파일 형식만 업로드 가능합니다.");
     }
   };
 
   const isValidFileType = (file) => {
     const allowedTypes = [
       "application/pdf",
-      "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
     ];
     return allowedTypes.includes(file.type);
   };
 
   const handleNextPage = () => {
-    setView('image');
+    setView("image");
   };
 
-  const isNextButtonEnabled = file && userText;  // 다음 버튼 활성화 여부
+  const isNextButtonEnabled = file && userText;
 
   return (
     <div className="container">
@@ -146,7 +168,7 @@ const MainScreen = () => {
             <label className="customFileInput">
               <input
                 type="file"
-                accept=".pdf,.docx"  // 허용되는 파일 확장자 설정
+                accept=".pdf,.docx"
                 onChange={(e) => handleFileChange(e.target.files[0])}
                 className="fileInput"
                 ref={fileInputRef}
@@ -166,9 +188,7 @@ const MainScreen = () => {
           </div>
 
           {previewContent ? (
-            <div className="filePreview">
-              {previewContent}
-            </div>
+            <div className="filePreview">{previewContent}</div>
           ) : (
             <div className="pdfPlaceholder">
               <p>파일 업로드 창</p>
@@ -185,19 +205,32 @@ const MainScreen = () => {
         다음
       </button>
 
-      {isLoading && <LoadingSpinner />} {/* 로딩 중일 때 로딩 스피너 표시 */}
+      {isLoading && (
+        <div className="overlay">
+          <div className="loadingContainer">
+            <CircularProgressbar
+              value={loadingProgress}
+              text={`${loadingProgress}%`}
+              styles={buildStyles({
+                textColor: "#ffffff", // 텍스트 색상
+                pathColor: "#6a99ff", // 진행 경로 색상
+                trailColor: "#4a4a4a", // 진행 경로 배경색
+              })}
+            />
+          </div>
+        </div>
+      )}
 
-      {isModalOpen && view === 'next' && (
+      {isModalOpen && view === "next" && (
         <NextPage
-          Content={summaryContent}  // 요약 텍스트 전달
+          Content={summaryContent}
           onNext={handleNextPage}
           onClose={handleCloseModal}
         />
       )}
-      {isModalOpen && view === 'image' && <ImagePage
-          pdfSummary={summaryContent}  // summaryContent를 ImagePage에 전달
-          onClose={handleCloseModal}
-        />}
+      {isModalOpen && view === "image" && (
+        <ImagePage pdfSummary={summaryContent} onClose={handleCloseModal} />
+      )}
     </div>
   );
 };

@@ -1,4 +1,3 @@
-// MessageSendPage.js
 import React, { useState } from "react";
 import "./css/MessageSendPage.css";
 import phoneImg from "./image/phoneImg.png";
@@ -124,7 +123,7 @@ const MessageSendPage = () => {
       console.log("전송 데이터:", requestData);
 
       const response = await fetch(
-      `${process.env.REACT_APP_SERVER_IP}/send-mms`,
+        `${process.env.REACT_APP_SERVER_IP}/send-mms`,
         {
           method: "POST",
           headers: {
