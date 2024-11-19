@@ -32,7 +32,7 @@ const RecipientList = ({ recipients, onRemove, onClear }) => (
 
 // 전화번호 유효성 검사 함수
 const isValidPhoneNumber = (number) => {
-  const phoneRegex = /^01[0-9]-\d{3,4}-\d{4}$/;
+  const phoneRegex = /^01[0-9]\d{3,4}\d{4}$/;
   return phoneRegex.test(number);
 };
 
@@ -71,6 +71,7 @@ const MessageSendPage = () => {
     }
   };
 
+  
   // 수신자 제거
   const handleRemoveRecipient = (number) => {
     setRecipients(recipients.filter((recipient) => recipient !== number));
