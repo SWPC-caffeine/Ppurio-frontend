@@ -12,7 +12,7 @@
   grid-template-columns: repeat(2, 1fr); /* 2개의 열 */
   gap: 30px; /* 간격 */
   justify-content: center;
-  margin-top: 20px;
+  margin-top: 5px;
 }
 
 .imageOption {
@@ -98,4 +98,18 @@
 .regenerateButton:hover {
   background-color: #ff85c1; /* 호버 시 밝은 핑크 */
   transform: translateX(-50%) scale(1.05); /* 살짝 커짐 */
+}
+.backButton {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.backButton img {
+  width: 24px;
+  height: 24px;
 }

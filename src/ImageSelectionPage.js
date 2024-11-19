@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./css/ImageSelectionPage.css";
+import leftIcon from './image/leftIcon.png';
 
 const ImageSelectionPage = ({ onSelectImage, onClose, summaryContent }) => {
   const [imageUrls, setImageUrls] = useState([]);
@@ -12,16 +13,16 @@ const ImageSelectionPage = ({ onSelectImage, onClose, summaryContent }) => {
     let progressInterval;
 
     if (loadingProgress < 97) {
-      // 90%까지 1%씩 증가
+      // 97%까지 1%씩 증가
       progressInterval = setInterval(() => {
         setLoadingProgress((prevProgress) => {
           if (prevProgress + 1 <= 97) {
             return prevProgress + 1;
           }
-          clearInterval(progressInterval); // 90%에 도달하면 멈춤
+          clearInterval(progressInterval); // 97%에 도달하면 멈춤
           return 97;
         });
-      }, 200); // 0.1초마다 1%씩 증가 (더 천천히)
+      }, 200); // 0.2초마다 1%씩 증가
     } else if (loadingProgress === 97) {
       // 97%에서 멈추고, 이미지 생성 시작
       fetch(`${process.env.REACT_APP_SERVER_IP}/create`, {
@@ -64,8 +65,12 @@ const ImageSelectionPage = ({ onSelectImage, onClose, summaryContent }) => {
   return (
     <div className="modalOverlay">
       <div className="modalContent">
-        <h3>{isImageGenerationComplete ? "이미지 선택" : "이미지 생성중.."}</h3>{" "}
-        {/* 텍스트 변경 */}
+        {/* 왼쪽 상단에 뒤로가기 화살표 추가 */}
+        <button className="backButton" onClick={onClose}>
+          <img src={leftIcon} alt="뒤로가기" />
+        </button>
+
+        <h3>{isImageGenerationComplete ? "이미지 선택" : "이미지 생성중.."}</h3>
         <div className="progressBarWrapper">
           {loadingProgress < 100 && (
             <>
@@ -105,9 +110,6 @@ const ImageSelectionPage = ({ onSelectImage, onClose, summaryContent }) => {
             <button className="regenerateButton">이미지 재생성</button>
           </>
         )}
-        <button className="closeButton" onClick={onClose}>
-          닫기
-        </button>
       </div>
     </div>
   );
