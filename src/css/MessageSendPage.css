@@ -24,6 +24,7 @@
 }
 
 /* 휴대폰 화면 위에 오버레이될 콘텐츠 */
+/* 휴대폰 화면 위에 오버레이될 콘텐츠 */
 .content-overlay {
   position: absolute;
   top: 80px;
@@ -35,6 +36,8 @@
   align-items: center;
   justify-content: center;
   gap: 15px;
+  padding: 10px; /* Added padding for better spacing */
+  box-sizing: border-box;
 }
 
 /* 이미지와 메시지 영역 */
@@ -48,18 +51,25 @@
   font-size: 18px;
   font-weight: bold;
   border-radius: 8px;
+  overflow: hidden; /* Ensures no overflow */
 }
 
+/* Message content area inside phone preview */
 .message-content {
-  font-size: 16px;
+  font-size: 12px; /* 글씨 크기 */
   color: #000;
   text-align: center;
   overflow: auto;
+  padding: 10px; /* 여백 추가 */
+  background-color: #ededed; /* 더 진한 회색 배경 */
+  width: 100%; /* 전체 너비 설정 */
+  box-sizing: border-box; /* 테두리와 패딩을 포함한 너비 계산 */
+  border-radius: 15px; /* 테두리 둥글게 만들기 */
 }
 
 /* 전체 우측 부분 너비 확장 */
 .send-settings {
-  width: 300px; /* 이전 250px에서 300px으로 확장 */
+  width: 300px; /* Slightly wider than the previous 250px */
   display: flex;
   flex-direction: column;
   gap: 15px;
@@ -88,7 +98,8 @@
   width: 100%;
 }
 
-.input-container, .receiver-list {
+.input-container,
+.receiver-list {
   width: 60%; /* 두 컨테이너의 너비 확장 */
   background-color: #f9f9f9;
   border: 1px dashed #ccc;
@@ -113,7 +124,8 @@
   margin-bottom: 10px; /* 아래 여백 추가 */
 }
 
-.add-button, .clear-button {
+.add-button,
+.clear-button {
   width: 100%;
   padding: 8px;
   background-color: #f0f0f0;
@@ -138,13 +150,14 @@
 }
 
 .send-button:hover {
-  background-color: #6A99FF; /* Change background color on hover */
+  background-color: #6a99ff; /* Change background color on hover */
   color: white; /* Change text color on hover */
-  border-color: #6A99FF; /* Change border color on hover */
+  border-color: #6a99ff; /* Change border color on hover */
 }
 
 /* 받는 사람 라벨 스타일 */
-.receiver-label, .input-label {
+.receiver-label,
+.input-label {
   align-self: flex-start;
   font-size: 14px;
   color: #666;
@@ -178,7 +191,6 @@
   overflow: hidden;
 }
 
-
 /* Phone number text inside the recipient item */
 .recipient-item > span {
   flex: 1;
@@ -206,29 +218,51 @@
   width: 100%;
 }
 
-.send-now, .send-scheduled {
+/* 즉시 발송 버튼 스타일 */
+.send-now {
   flex: 1;
   padding: 15px;
-  background-color: #ddd;
-  border: 2px solid #ddd; /* Set a border for the default state */
+  background-color: #9bc9fa; /* 즉시 발송 버튼 색상 */
+  border: 2px solid #007bff; /* 테두리 색상 */
   text-align: center;
   border-radius: 8px;
   cursor: pointer;
   font-size: 16px;
-  transition: border-color 0.3s ease, color 0.3s ease, background-color 0.3s ease;
+  transition: border-color 0.3s ease, color 0.3s ease,
+    background-color 0.3s ease;
 }
 
-/* Button active state with border color and text color change */
-.send-now.active, .send-scheduled.active {
-  background-color: white; /* Set background color to white for active */
-  color: #6A99FF; /* Change text color */
-  border-color: #6A99FF; /* Change border color for active */
+/* 보라색 보내기 버튼 */
+.send-scheduled {
+  flex: 1;
+  padding: 15px;
+  background-color: #dab1f7; /* 보라색 */
+  text-align: center;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: border-color 0.3s ease, color 0.3s ease,
+    background-color 0.3s ease;
 }
 
-/* Hover effect for send-now and send-scheduled */
-.send-now:hover, .send-scheduled:hover {
-  background-color: #f0f0f0; /* Lighten background on hover */
-  border-color: #6A99FF; /* Hover border color */
+/* 즉시 발송 버튼 활성화 상태 */
+.send-now.active {
+  background-color: white; /* 배경을 흰색으로 */
+  color: #007bff; /* 텍스트 색상 변경 */
+}
+
+/* 보라색 보내기 버튼 활성화 상태 */
+.send-scheduled.active {
+  background-color: white; /* 배경을 흰색으로 */
+  color: #dab1f7; /* 텍스트 색상 변경 */
+  border-color: #dab1f7; /* 테두리 색상 */
+}
+
+/* 버튼 호버 상태 */
+.send-now:hover,
+.send-scheduled:hover {
+  background-color: #f0f0f0; /* 호버 시 배경 색상 */
+  border-color: #007bff; /* 테두리 색상 변경 */
 }
 
 /* Date picker styling */
