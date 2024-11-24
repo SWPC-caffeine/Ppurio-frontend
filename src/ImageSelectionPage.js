@@ -70,7 +70,7 @@ const ImageSelectionPage = ({ onSelectImage, onClose, summaryContent }) => {
           <img src={leftIcon} alt="뒤로가기" />
         </button>
 
-        <h3>{isImageGenerationComplete ? "이미지 선택" : "이미지 생성중.."}</h3>
+        <h3>{isImageGenerationComplete ? "이미지 확인" : "이미지 생성중.."}</h3>
         <div className="progressBarWrapper">
           {loadingProgress < 100 && (
             <>
@@ -86,17 +86,14 @@ const ImageSelectionPage = ({ onSelectImage, onClose, summaryContent }) => {
         </div>
         <div className="imageGrid">
           {imageUrls.length > 0 ? (
-            imageUrls.map((url, index) => (
-              <img
-                key={index}
-                src={url}
-                alt={`Option ${index + 1}`}
-                className={`imageOption ${
-                  selectedImage === url ? "selected" : ""
-                }`}
-                onClick={() => handleImageClick(url)}
-              />
-            ))
+            <img
+            src={imageUrls[0]} // 첫 번째 이미지만 사용
+            alt="Selected Option"
+            className={`imageOption ${
+              selectedImage === imageUrls[0] ? "selected" : ""
+            }`}
+            onClick={() => handleImageClick(imageUrls[0])} // 첫 번째 이미지 클릭 이벤트 처리
+          />
           ) : (
             <p></p> // 이미지가 로드될 때까지 아무것도 표시되지 않음
           )}

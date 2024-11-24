@@ -9,15 +9,13 @@
 
 .imageGrid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr); /* 2개의 열 */
-  gap: 30px; /* 간격 */
   justify-content: center;
-  margin-top: 5px;
+  margin-bottom: 70px;
 }
 
 .imageOption {
-  width: 200px; /* 이미지 크기 확대 */
-  height: 200px; /* 이미지 크기 확대 */
+  width: 400px; /* 이미지 크기 확대 */
+  height: 400px; /* 이미지 크기 확대 */
   object-fit: cover;
   cursor: pointer;
   border: 2px solid transparent;
