@@ -182,7 +182,7 @@ const ImagePage = ({ pdfSummary, selectedImageUrl, onClose }) => {
   return (
     <div className="modalImageOverlay">
       <div className="modalImageContent">
-        <h3>커스터마이즈된 포스터</h3>
+        <h3>포스터 편집</h3>
 
         {/* 모드 전환 버튼 */}
         <div className="modeSwitchContainer">
