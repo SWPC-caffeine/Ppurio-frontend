@@ -35,7 +35,7 @@ const ImagePage = ({ pdfSummary, selectedImageUrl, onClose }) => {
           text: sentence.trim(),
           position: {
             x: 20, // 텍스트가 이미지의 왼쪽에서 20px 떨어진 위치
-            y: initialYOffset + index * (textHeight + padding) - 600, // 위에서부터 텍스트 간격 계산
+            y: initialYOffset + index * (textHeight + padding) - 550, // 위에서부터 텍스트 간격 계산
           },
           style: {
             color: "#000",
