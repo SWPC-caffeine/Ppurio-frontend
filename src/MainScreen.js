@@ -149,6 +149,7 @@ const MainScreen = () => {
       <div className="leftSection">
         <h2>발송 목적</h2>
         <textarea
+          spellCheck = "false"
           placeholder="프롬프트 텍스트 입력"
           className="textInput"
           value={userText}

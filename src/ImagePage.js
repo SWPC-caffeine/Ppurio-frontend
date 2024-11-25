@@ -7,13 +7,13 @@ import html2canvas from "html2canvas";
 const ImagePage = ({ pdfSummary, selectedImageUrl, onClose }) => {
   const navigate = useNavigate();
   const [texts, setTexts] = useState([]);
-  const [selectedTextId, setSelectedTextId] = useState(null);
+  const [selectedTextIds, setSelectedTextIds] = useState([]); // 다중 선택을 위한 배열
   const [mode, setMode] = useState("move"); // 'move' 또는 'edit'
 
   // 모드 변경 시 선택된 텍스트 해제
   useEffect(() => {
     if (mode !== "edit") {
-      setSelectedTextId(null);
+      setSelectedTextIds([]); // 모드 변경 시 다중 선택 초기화
     }
   }, [mode]);
 
@@ -117,46 +117,67 @@ const ImagePage = ({ pdfSummary, selectedImageUrl, onClose }) => {
 
   const handleTextClick = (id, event) => {
     event.stopPropagation();
-    setSelectedTextId(id);
+
+    if (event.ctrlKey || event.metaKey) {
+      // Ctrl(Mac의 경우 Command) 키를 눌렀을 때 다중 선택
+      setSelectedTextIds((prevSelected) =>
+        prevSelected.includes(id)
+          ? prevSelected.filter((textId) => textId !== id) // 이미 선택된 경우 제거
+          : [...prevSelected, id] // 선택된 경우 추가
+      );
+    } else {
+      // Ctrl 키를 누르지 않았을 때는 단일 선택
+      setSelectedTextIds([id]);
+    }
   };
 
   const handleStyleChange = (styleType, value) => {
-    if (selectedTextId !== null) {
-      setTexts((prev) =>
-        prev.map((text) =>
-          text.id === selectedTextId
-            ? { ...text, style: { ...text.style, [styleType]: value } }
-            : text
-        )
-      );
-    }
+    setTexts((prev) =>
+      prev.map((text) =>
+        selectedTextIds.includes(text.id)
+          ? { ...text, style: { ...text.style, [styleType]: value } }
+          : text
+      )
+    );
   };
 
   const handleBoldToggle = () => {
-    if (selectedTextId !== null) {
-      setTexts((prev) =>
-        prev.map((text) =>
-          text.id === selectedTextId
-            ? {
-                ...text,
-                style: {
-                  ...text.style,
-                  fontWeight:
-                    text.style.fontWeight === "bold" ? "normal" : "bold",
-                },
-              }
-            : text
-        )
-      );
-    }
+    setTexts((prev) =>
+      prev.map((text) =>
+        selectedTextIds.includes(text.id)
+          ? {
+              ...text,
+              style: {
+                ...text.style,
+                fontWeight:
+                  text.style.fontWeight === "bold" ? "normal" : "bold",
+              },
+            }
+          : text
+      )
+    );
   };
 
   const handleTextDelete = () => {
-    if (selectedTextId !== null) {
-      setTexts((prev) => prev.filter((text) => text.id !== selectedTextId));
-      setSelectedTextId(null);
-    }
+    setTexts((prev) => prev.filter((text) => !selectedTextIds.includes(text.id)));
+    setSelectedTextIds([]);
   };
+
+  const fontSizeValue = (() => {
+    const selectedTexts = texts.filter((text) =>
+      selectedTextIds.includes(text.id)
+    );
+    const fontSizes = selectedTexts.map((text) =>
+      parseInt(text.style.fontSize)
+    );
+    const uniqueFontSizes = [...new Set(fontSizes)];
+    if (uniqueFontSizes.length === 1) {
+      return uniqueFontSizes[0];
+    } else {
+      return "";
+    }
+  })();
+  
 
   return (
     <div className="modalImageOverlay">
@@ -184,7 +205,7 @@ const ImagePage = ({ pdfSummary, selectedImageUrl, onClose }) => {
         </div>
 
         {/* 편집 모드에서 툴바를 이미지 영역 밖에 배치 */}
-        {mode === "edit" && (
+        {mode === "edit" && selectedTextIds.length > 0 && (
           <div
             className="floatingToolbar"
             data-html2canvas-ignore="true"
@@ -194,61 +215,28 @@ const ImagePage = ({ pdfSummary, selectedImageUrl, onClose }) => {
               색상:
               <input
                 type="color"
-                value={
-                  selectedTextId !== null
-                    ? texts.find((text) => text.id === selectedTextId).style
-                        .color
-                    : "#000000"
-                }
-                onChange={(e) =>
-                  handleStyleChange("color", e.target.value)
-                }
-                disabled={selectedTextId === null}
+                onChange={(e) => handleStyleChange("color", e.target.value)}
               />
             </label>
             <label>
-              글자 크기:
-              <input
-                type="number"
-                min="10"
-                max="100"
-                value={
-                  selectedTextId !== null
-                    ? parseInt(
-                        texts.find((text) => text.id === selectedTextId).style
-                          .fontSize
-                      )
-                    : 16
-                }
-                onChange={(e) =>
-                  handleStyleChange("fontSize", `${e.target.value}px`)
-                }
-                disabled={selectedTextId === null}
-              />
-            </label>
-            <button
-              onClick={handleBoldToggle}
-              disabled={selectedTextId === null}
-            >
-              {selectedTextId !== null &&
-              texts.find((text) => text.id === selectedTextId).style
-                .fontWeight === "bold"
-                ? "Normal"
-                : "Bold"}
-            </button>
+            글자 크기:
+            <input
+              type="number"
+              min="10"
+              max="100"
+              value={fontSizeValue}
+              onChange={(e) =>
+                handleStyleChange("fontSize", `${e.target.value}px`)
+              }
+            />
+          </label>
+            <button onClick={handleBoldToggle}>Bold</button>
             <label>
               폰트:
               <select
                 onChange={(e) =>
                   handleStyleChange("fontFamily", e.target.value)
                 }
-                value={
-                  selectedTextId !== null
-                    ? texts.find((text) => text.id === selectedTextId).style
-                        .fontFamily
-                    : "Arial"
-                }
-                disabled={selectedTextId === null}
               >
                 <option value="Arial">Arial</option>
                 <option value="Verdana">Verdana</option>
@@ -263,12 +251,7 @@ const ImagePage = ({ pdfSummary, selectedImageUrl, onClose }) => {
                 <option value="CookieRun Regular">CookieRun Regular</option>
               </select>
             </label>
-            <button
-              onClick={handleTextDelete}
-              disabled={selectedTextId === null}
-            >
-              삭제
-            </button>
+            <button onClick={handleTextDelete}>삭제</button>
           </div>
         )}
 
@@ -283,8 +266,8 @@ const ImagePage = ({ pdfSummary, selectedImageUrl, onClose }) => {
                 }`}
                 onClick={(e) => {
                   e.stopPropagation();
-                  if (selectedTextId !== null) {
-                    setSelectedTextId(null);
+                  if (selectedTextIds.length > 0) {
+                    setSelectedTextIds([]);
                   }
                 }}
               >
@@ -311,7 +294,7 @@ const ImagePage = ({ pdfSummary, selectedImageUrl, onClose }) => {
                   >
                     <div
                       className={`overlayText ${
-                        selectedTextId === text.id ? "selectedText" : ""
+                        selectedTextIds.includes(text.id) ? "selectedText" : ""
                       }`}
                       style={text.style}
                       onClick={(e) => {

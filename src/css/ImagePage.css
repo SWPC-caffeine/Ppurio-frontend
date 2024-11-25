@@ -88,7 +88,7 @@
 
 .floatingToolbar {
   position: absolute;
-  top: 40px; /* 필요에 따라 조정 */
+  top: 15px; /* 필요에 따라 조정 */
   left: 50%;
   transform: translateX(-50%);
   display: flex;

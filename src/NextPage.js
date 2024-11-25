@@ -40,6 +40,7 @@ const NextPage = ({ Content = "", onNext, onClose }) => {
               value={summaryContent || ""}
               onChange={handleSummaryChange}
               rows="10"
+              spellCheck = "fasle"
             />
           </div>
           <button className="nextButton2" onClick={handleOpenImageSelection}>
