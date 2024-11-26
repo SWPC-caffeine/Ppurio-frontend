@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./css/ImageSelectionPage.css";
-import leftIcon from './image/leftIcon.png';
+import leftIcon from "./image/leftIcon.png";
 
 const ImageSelectionPage = ({ onSelectImage, onClose, summaryContent }) => {
   const [imageUrls, setImageUrls] = useState([]);
@@ -9,6 +9,7 @@ const ImageSelectionPage = ({ onSelectImage, onClose, summaryContent }) => {
   const [isImageGenerationComplete, setIsImageGenerationComplete] =
     useState(false);
 
+  // 이미지 생성 및 진행 상황 처리
   useEffect(() => {
     let progressInterval;
 
@@ -50,16 +51,26 @@ const ImageSelectionPage = ({ onSelectImage, onClose, summaryContent }) => {
     return () => clearInterval(progressInterval); // 컴포넌트가 언마운트되거나 업데이트될 때 interval을 정리
   }, [loadingProgress, summaryContent]);
 
+  // 이미지 클릭 처리
   const handleImageClick = (url) => {
     setSelectedImage(url);
   };
 
+  // "다음" 버튼 클릭 처리
   const handleNextClick = () => {
     if (selectedImage) {
       onSelectImage(selectedImage);
     } else {
       alert("이미지를 선택해주세요.");
     }
+  };
+
+  // "이미지 재생성" 버튼 클릭 시 처리
+  const handleRegenerateClick = () => {
+    setImageUrls([]); // 이미지 목록 초기화
+    setLoadingProgress(0); // 진행 상태 초기화
+    setIsImageGenerationComplete(false); // 이미지 생성 상태 초기화
+    setSelectedImage(null); // 선택된 이미지 초기화
   };
 
   return (
@@ -87,13 +98,13 @@ const ImageSelectionPage = ({ onSelectImage, onClose, summaryContent }) => {
         <div className="imageGrid">
           {imageUrls.length > 0 ? (
             <img
-            src={imageUrls[0]} // 첫 번째 이미지만 사용
-            alt="Selected Option"
-            className={`imageOption ${
-              selectedImage === imageUrls[0] ? "selected" : ""
-            }`}
-            onClick={() => handleImageClick(imageUrls[0])} // 첫 번째 이미지 클릭 이벤트 처리
-          />
+              src={imageUrls[0]} // 첫 번째 이미지만 사용
+              alt="Selected Option"
+              className={`imageOption ${
+                selectedImage === imageUrls[0] ? "selected" : ""
+              }`}
+              onClick={() => handleImageClick(imageUrls[0])} // 첫 번째 이미지 클릭 이벤트 처리
+            />
           ) : (
             <p></p> // 이미지가 로드될 때까지 아무것도 표시되지 않음
           )}
@@ -104,7 +115,12 @@ const ImageSelectionPage = ({ onSelectImage, onClose, summaryContent }) => {
             <button className="selectionNextButton" onClick={handleNextClick}>
               다음
             </button>
-            <button className="regenerateButton">이미지 재생성</button>
+            <button
+              className="regenerateButton"
+              onClick={handleRegenerateClick}
+            >
+              이미지 재생성
+            </button>
           </>
         )}
       </div>
